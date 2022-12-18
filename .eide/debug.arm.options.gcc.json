@@ -4,21 +4,23 @@
     "afterBuildTasks": [],
     "global": {
         "$float-abi-type": "hard",
-        "output-debug-info": "enable"
+        "output-debug-info": "enable",
+        "misc-control": "-u _printf_float"
     },
     "c/cpp-compiler": {
         "language-c": "gnu17",
         "language-cpp": "gnu++17",
-        "optimization": "level-debug",
+        "optimization": "level-0",
         "warnings": "all-warnings",
         "one-elf-section-per-function": true,
-        "one-elf-section-per-data": true
+        "one-elf-section-per-data": true,
+        "CXX_FLAGS": "-fno-rtti"
     },
     "asm-compiler": {},
     "linker": {
         "output-format": "elf",
         "remove-unused-input-sections": true,
         "LD_FLAGS": "--specs=nosys.specs --specs=nano.specs",
-        "LIB_FLAGS": "-lm"
+        "LIB_FLAGS": "-lm -lstdc++"
     }
 }
