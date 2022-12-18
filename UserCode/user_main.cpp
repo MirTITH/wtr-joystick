@@ -2,11 +2,11 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include <string.h>
+#include "freertos_usb_io.h"
+#include "stdio.h"
+#include "usb_device.h"
+#include "usb_reset.h"
 
-int *numPtr  = nullptr;
-int *numPtr2 = nullptr;
-
-int testNum;
 
 void SysInit()
 {
@@ -26,18 +26,13 @@ void SysInit()
 void StartDefaultTask(void *argument)
 {
     (void)argument;
-    int stackNum = 0;
-
-    (void)stackNum;
-
-    numPtr  = new int(0);
-    numPtr2 = (int *)pvPortMalloc(sizeof(int));
+    USB_Reset();
+    MX_USB_DEVICE_Init();
+    FreeRTOS_IO_Init();
+    osDelay(500);
 
     for (;;) {
-        (*numPtr)++;
-        (*numPtr2)++;
-        testNum = *numPtr2;
-        stackNum++;
+        printf("Hello\n");
         vTaskDelay(100);
     }
 }
