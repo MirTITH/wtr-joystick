@@ -3,10 +3,13 @@
 #include "cmsis_os.h"
 #include <string.h>
 #include "freertos_usb_io.h"
-#include "stdio.h"
+#include <stdio.h>
 #include "usb_device.h"
 #include "usb_reset.h"
+#include <string>
+#include "wtr_log.hpp"
 
+using namespace std;
 
 void SysInit()
 {
@@ -29,10 +32,11 @@ void StartDefaultTask(void *argument)
     USB_Reset();
     MX_USB_DEVICE_Init();
     FreeRTOS_IO_Init();
-    osDelay(500);
+
+    int counter = 0;
 
     for (;;) {
-        printf("Hello\n");
+        LogWithLine(1) << "Hello " << counter++ << endl;
         vTaskDelay(100);
     }
 }
