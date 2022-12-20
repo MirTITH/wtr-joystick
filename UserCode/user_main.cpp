@@ -1,15 +1,19 @@
 #include "user_main.hpp"
 #include "main.h"
 #include "cmsis_os.h"
-#include <string.h>
+#include <cstring>
 #include "freertos_usb_io.h"
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include "usb_device.h"
 #include "usb_reset.h"
-#include <string>
+#include "fmt/ranges.h"
 #include "wtr_log.hpp"
+#include "STM32_ILI9481.hpp"
 
 using namespace std;
+
+LCD_ILI9481 LCD;
 
 void SysInit()
 {
@@ -33,10 +37,11 @@ void StartDefaultTask(void *argument)
     MX_USB_DEVICE_Init();
     FreeRTOS_IO_Init();
 
-    int counter = 0;
+    LCD.initializeDisplay();
 
     for (;;) {
-        LogWithLine(1) << "Hello " << counter++ << endl;
+        Log() << 1.0055 << endl;
+        // fmt::print("Hello\n");
         vTaskDelay(100);
     }
 }
