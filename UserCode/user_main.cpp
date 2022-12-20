@@ -1,6 +1,7 @@
 #include "user_main.hpp"
 #include "main.h"
-#include "cmsis_os.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 #include <cstring>
 #include "freertos_usb_io.h"
 #include <cstdlib>
@@ -9,11 +10,23 @@
 #include "usb_reset.h"
 #include "fmt/ranges.h"
 #include "wtr_log.hpp"
-#include "STM32_ILI9481.hpp"
+
+#include "lvgl.h"
+#include "lv_port_disp.h"
 
 using namespace std;
 
-LCD_ILI9481 LCD;
+static SemaphoreHandle_t xMutex;
+
+void lv_mutex_lock()
+{
+    xSemaphoreTake(xMutex, portMAX_DELAY);
+}
+
+void lv_mutex_unlock()
+{
+    xSemaphoreGive(xMutex);
+}
 
 void SysInit()
 {
@@ -37,12 +50,21 @@ void StartDefaultTask(void *argument)
     MX_USB_DEVICE_Init();
     FreeRTOS_IO_Init();
 
-    LCD.initializeDisplay();
-    LCD.SetBacklight(500);
+    xMutex = xSemaphoreCreateMutex();
+
+    vTaskDelay(2000);
+
+    lv_init();
+    lv_port_disp_init();
+
+    uint32_t PreviousWakeTime = xTaskGetTickCount();
 
     for (;;) {
-        Log() << 1.0055 << endl;
+        // Log() << 1.0055 << endl;
         // fmt::print("Hello\n");
-        vTaskDelay(100);
+        lv_mutex_lock();
+        lv_task_handler();
+        lv_mutex_unlock();
+        vTaskDelayUntil(&PreviousWakeTime, 5);
     }
 }

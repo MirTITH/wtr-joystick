@@ -65,6 +65,13 @@ void StartDefaultTask(void *argument);
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
+/* Hook prototypes */
+void vApplicationTickHook(void);
+
+/* USER CODE BEGIN 3 */
+
+/* USER CODE END 3 */
+
 /**
   * @brief  FreeRTOS initialization
   * @param  None

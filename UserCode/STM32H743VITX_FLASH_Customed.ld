@@ -75,6 +75,10 @@ SECTIONS
   {
     . = ALIGN(4);
     _sbss_d2 = .;         /* define a global symbol at ram_d2 bss start */
+    
+    *lv_mem.o(.bss.work_mem_int*)
+    *lv_port_disp.o(.bss.*buf_1*)
+    *lv_port_disp.o(.bss.*buf_2*)
 
     . = ALIGN(4);
     _ebss_d2 = .;         /* define a global symbol at ram_d2 bss end */
@@ -85,7 +89,7 @@ SECTIONS
     . = ALIGN(4);
     _sbss_d3 = .;         /* define a global symbol at ram_d3 bss start */
 
-    *heap_4.o(.bss.ucHeap)
+    *heap_4.o(.bss.ucHeap*)
 
     . = ALIGN(4);
     _ebss_d3 = .;         /* define a global symbol at ram_d3 bss end */

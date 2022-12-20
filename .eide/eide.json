@@ -92,7 +92,9 @@
         "defineList": [
           "USE_HAL_DRIVER",
           "STM32H743xx",
-          "STM32_THREAD_SAFE_STRATEGY=4"
+          "STM32_THREAD_SAFE_STRATEGY=4",
+          "LV_CONF_INCLUDE_SIMPLE",
+          "LV_LVGL_H_INCLUDE_SIMPLE"
         ]
       }
     }

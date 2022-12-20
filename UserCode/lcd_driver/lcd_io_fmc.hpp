@@ -17,17 +17,16 @@ private:
 
     // 背光控制引脚
     GPIO_TypeDef *const BL_GPIOX = GPIOC;
-    const uint16_t BL_GPIO_PIN = GPIO_PIN_6;
-    const bool BL_ON_LEVEL = true;
+    const uint16_t BL_GPIO_PIN   = GPIO_PIN_6;
+    const bool BL_ON_LEVEL       = true;
 
     // RESET 引脚
     GPIO_TypeDef *const RESET_GPIOX = LcdReset_GPIO_Port;
-    const uint16_t RESET_GPIO_PIN = LcdReset_Pin;
-
-    volatile uint16_t *const LCD_COMMAND_ADDRESS = (uint16_t *)LCD_BASE;
-    volatile uint16_t *const LCD_DATA_ADDRESS = (uint16_t *)(LCD_BASE + (0x4000000 - 2));
+    const uint16_t RESET_GPIO_PIN   = LcdReset_Pin;
 
 public:
+    volatile uint16_t *const LCD_COMMAND_ADDRESS = (uint16_t *)LCD_BASE;
+    volatile uint16_t *const LCD_DATA_ADDRESS    = (uint16_t *)(LCD_BASE + (0x4000000 - 2));
     // LcdIoFmc(){};
     // ~LcdIoFmc(){};
     void LcdInit();
