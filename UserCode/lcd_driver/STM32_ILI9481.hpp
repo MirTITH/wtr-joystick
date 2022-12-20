@@ -12,7 +12,7 @@
 #include "main.h"
 #include "lcd_io_fmc.hpp"
 
-class LCD_ILI9481 : LcdIoFmc
+class LCD_ILI9481 : public LcdIoFmc
 {
 private:
     const int Width = 320;  // Physical width

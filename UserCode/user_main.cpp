@@ -38,6 +38,7 @@ void StartDefaultTask(void *argument)
     FreeRTOS_IO_Init();
 
     LCD.initializeDisplay();
+    LCD.SetBacklight(500);
 
     for (;;) {
         Log() << 1.0055 << endl;
