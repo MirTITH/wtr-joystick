@@ -82,7 +82,9 @@
             "thread": "cpp",
             "typeinfo": "cpp",
             "iomanip": "cpp",
-            "numbers": "cpp"
+            "numbers": "cpp",
+            "cinttypes": "cpp",
+            "variant": "cpp"
         },
         "[yaml]": {
             "editor.insertSpaces": true,

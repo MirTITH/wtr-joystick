@@ -20,12 +20,20 @@
 
 namespace wtr
 {
+    enum LogLevel {
+        Debug = 0,
+        Info,
+        Warning,
+        Error
+    };
+
     class LOG
     {
     private:
-        int _log_level;               // log 等级
-        int _min_output_loglevel = 1; // 打印输出的等级范围
-        int _max_output_loglevel = 5; // 打印输出的等级范围
+        int _min_output_loglevel = LogLevel::Debug;  // 打印输出的等级范围
+        int _max_output_loglevel = LogLevel::Error; // 打印输出的等级范围
+
+        LogLevel _log_level; // log 等级
 
         void PutString(const std::string &str)
         {
@@ -42,7 +50,7 @@ namespace wtr
         }
 
     public:
-        LOG(int log_level = 1)
+        LOG(LogLevel log_level = LogLevel::Info)
             : _log_level(log_level){};
 
         LOG &operator<<(const std::stringstream &input)
@@ -121,13 +129,44 @@ namespace wtr
     };
 } // namespace wtr
 
-static inline wtr::LOG Log(int log_level = 1)
+static inline wtr::LOG wtrDebug()
 {
-    wtr::LOG wtrLog(log_level);
+    wtr::LOG wtrLog(wtr::LogLevel::Debug);
     return wtrLog;
 }
 
-#define LogWithLine(x)                      \
+static inline wtr::LOG wtrInfo()
+{
+    wtr::LOG wtrLog(wtr::LogLevel::Info);
+    return wtrLog;
+}
+
+static inline wtr::LOG wtrWarning()
+{
+    wtr::LOG wtrLog(wtr::LogLevel::Warning);
+    return wtrLog;
+}
+
+static inline wtr::LOG wtrError()
+{
+    wtr::LOG wtrLog(wtr::LogLevel::Error);
+    return wtrLog;
+}
+
+#define wtrDebugLine()                      \
     printf("%s:%d:\t", __FILE__, __LINE__); \
-    wtr::LOG wtrLog(x);                     \
+    wtr::LOG wtrLog(wtr::LogLevel::Debug);  \
+    wtrLog
+#define wtrInfoLine()                       \
+    printf("%s:%d:\t", __FILE__, __LINE__); \
+    wtr::LOG wtrLog(wtr::LogLevel::Info);   \
+    wtrLog
+#define wtrWarningLine()                     \
+    printf("%s:%d:\t", __FILE__, __LINE__);  \
+    wtr::LOG wtrLog(wtr::LogLevel::Warning); \
+    wtrLog
+
+#define wtrErrorLine()                      \
+    printf("%s:%d:\t", __FILE__, __LINE__); \
+    wtr::LOG wtrLog(wtr::LogLevel::Error);  \
     wtrLog

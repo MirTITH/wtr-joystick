@@ -10,33 +10,26 @@
 #include "usb_reset.h"
 #include "fmt/ranges.h"
 #include "wtr_log.hpp"
-
-#include "lvgl.h"
-#include "lv_port_disp.h"
+#include "lvgl_thread.hpp"
 
 using namespace std;
 
-static SemaphoreHandle_t xMutex;
-
-void lv_mutex_lock()
-{
-    xSemaphoreTake(xMutex, portMAX_DELAY);
-}
-
-void lv_mutex_unlock()
-{
-    xSemaphoreGive(xMutex);
-}
-
 void SysInit()
 {
+    // 各区域bss段的开始结束地址（定义在 ld 文件中）
     extern uint32_t _sbss_d1, _sbss_d2, _sbss_d3, _sbss_itcm;
     extern uint32_t _ebss_d1, _ebss_d2, _ebss_d3, _ebss_itcm;
 
+    /**
+     * @brief 清理内存的函数
+     * @param startPos 开始地址
+     * @param endPos 结束地址
+     */
     auto clearMem = [](void *startPos, void *endPos) {
         memset(startPos, 0, (uint32_t)endPos - (uint32_t)startPos);
     };
 
+    // 清零各区域的 bss 段
     clearMem(&_sbss_d1, &_ebss_d1);
     clearMem(&_sbss_d2, &_ebss_d2);
     clearMem(&_sbss_d3, &_ebss_d3);
@@ -50,21 +43,23 @@ void StartDefaultTask(void *argument)
     MX_USB_DEVICE_Init();
     FreeRTOS_IO_Init();
 
-    xMutex = xSemaphoreCreateMutex();
+    try {
+        LvglThread::GetInstance().StartThread();
+    } catch (const std::exception &e) {
+        wtrErrorLine() << "Err. Start lvgl thread failed :" << e.what() << endl;
+    } catch (...) {
+        wtrErrorLine() << "Err. Start lvgl thread failed : Unknown reason." << endl;
+    }
 
-    vTaskDelay(2000);
-
-    lv_init();
-    lv_port_disp_init();
+    // 删除当前线程
+    // vTaskDelete(nullptr);
 
     uint32_t PreviousWakeTime = xTaskGetTickCount();
 
     for (;;) {
         // Log() << 1.0055 << endl;
         // fmt::print("Hello\n");
-        lv_mutex_lock();
-        lv_task_handler();
-        lv_mutex_unlock();
-        vTaskDelayUntil(&PreviousWakeTime, 5);
+        wtrDebug() << "Time:" << PreviousWakeTime << endl;
+        vTaskDelayUntil(&PreviousWakeTime, 1000);
     }
 }
