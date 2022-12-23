@@ -8,7 +8,7 @@
 #include <cstdio>
 #include "usb_device.h"
 #include "usb_reset.h"
-#include "fmt/ranges.h"
+#include "component/fmt/ranges.h"
 #include "wtr_log.hpp"
 #include "lvgl_thread.hpp"
 
