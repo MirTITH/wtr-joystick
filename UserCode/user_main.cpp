@@ -44,7 +44,7 @@ void StartDefaultTask(void *argument)
     FreeRTOS_IO_Init();
 
     try {
-        LvglThread::GetInstance().StartThread();
+        LvglMain::GetInstance().StartThread();
     } catch (const std::exception &e) {
         wtrErrorLine() << "Err. Start lvgl thread failed :" << e.what() << endl;
     } catch (...) {
@@ -52,14 +52,14 @@ void StartDefaultTask(void *argument)
     }
 
     // 删除当前线程
-    // vTaskDelete(nullptr);
+    vTaskDelete(nullptr);
 
-    uint32_t PreviousWakeTime = xTaskGetTickCount();
+    // uint32_t PreviousWakeTime = xTaskGetTickCount();
 
-    for (;;) {
-        // Log() << 1.0055 << endl;
-        // fmt::print("Hello\n");
-        wtrDebug() << "Time:" << PreviousWakeTime << endl;
-        vTaskDelayUntil(&PreviousWakeTime, 1000);
-    }
+    // for (;;) {
+    //     // Log() << 1.0055 << endl;
+    //     // fmt::print("Hello\n");
+    //     wtrDebug() << "Time:" << PreviousWakeTime << endl;
+    //     vTaskDelayUntil(&PreviousWakeTime, 1000);
+    // }
 }

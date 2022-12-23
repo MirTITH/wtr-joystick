@@ -10,14 +10,14 @@ extern "C" {
 #include "lv_port_disp.h"
 #include "cmsis_os.h"
 
-class LvglThread
+class LvglMain
 {
 public:
     // 获取单例
-    static LvglThread &GetInstance()
+    static LvglMain &GetInstance()
     {
         // 需要 c++11 及以上标准以保证线程安全
-        static LvglThread instance;
+        static LvglMain instance;
         return instance;
     }
 
@@ -47,16 +47,16 @@ public:
     }
 
 private:
-    SemaphoreHandle_t mutex = nullptr;
-    TaskHandle_t *thread_handle = nullptr;
+    SemaphoreHandle_t mutex     = nullptr;
+    TaskHandle_t thread_handle = nullptr;
 
     static void thread_entry(void *argument);
 
     // 实现单例模式
-    LvglThread(){};
-    ~LvglThread()                             = default;
-    LvglThread(const LvglThread &)            = delete;
-    LvglThread &operator=(const LvglThread &) = delete;
+    LvglMain(){};
+    ~LvglMain()                           = default;
+    LvglMain(const LvglMain &)            = delete;
+    LvglMain &operator=(const LvglMain &) = delete;
 };
 
 #ifdef __cplusplus

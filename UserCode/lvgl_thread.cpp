@@ -16,7 +16,7 @@ public:
     }
 };
 
-void LvglThread::StartThread()
+void LvglMain::StartThread()
 {
     if (mutex == nullptr) {
         mutex = xSemaphoreCreateRecursiveMutex();
@@ -28,7 +28,7 @@ void LvglThread::StartThread()
     }
 
     if (thread_handle == nullptr) {
-        auto result = xTaskCreate(thread_entry, "lvgl_thread", 512, this, osPriorityBelowNormal, thread_handle);
+        auto result = xTaskCreate(thread_entry, "lvgl_thread", 512, this, osPriorityBelowNormal, &thread_handle);
         if (result != pdPASS) {
             throw StrException("Unable to create lvgl_thread.");
         }
@@ -37,12 +37,15 @@ void LvglThread::StartThread()
     }
 }
 
-void LvglThread::thread_entry(void *argument)
+void LvglMain::thread_entry(void *argument)
 {
-    auto lvgl_thread = (LvglThread *)argument;
+    auto lvgl_thread = (LvglMain *)argument;
 
     lv_init();
     lv_port_disp_init();
+
+    extern void StartScreenConsoleThread();
+    StartScreenConsoleThread();
 
     uint32_t PreviousWakeTime = xTaskGetTickCount();
 
