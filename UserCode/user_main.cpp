@@ -44,7 +44,7 @@ void StartDefaultTask(void *argument)
     FreeRTOS_IO_Init();
 
     try {
-        LvglMain::GetInstance().StartThread();
+        StartLvglMainThread();
     } catch (const std::exception &e) {
         wtrErrorLine() << "Err. Start lvgl thread failed :" << e.what() << endl;
     } catch (...) {

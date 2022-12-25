@@ -111,7 +111,7 @@
     /*Allow buffering some shadow calculation.
     *LV_SHADOW_CACHE_SIZE is the max. shadow size to buffer, where shadow size is `shadow_width + radius`
     *Caching has LV_SHADOW_CACHE_SIZE^2 RAM cost*/
-    #define LV_SHADOW_CACHE_SIZE 32
+    #define LV_SHADOW_CACHE_SIZE 0
 
     /* Set number of maximally cached circle data.
     * The circumference of 1/4 circle are saved for anti-aliasing
@@ -177,7 +177,7 @@
 #define LV_USE_GPU_ARM2D 0
 
 /*Use STM32's DMA2D (aka Chrom Art) GPU*/
-#define LV_USE_GPU_STM32_DMA2D 1
+#define LV_USE_GPU_STM32_DMA2D 0
 #if LV_USE_GPU_STM32_DMA2D
     /*Must be defined to include path of CMSIS header of target processor
     e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
@@ -219,7 +219,7 @@
  *-----------*/
 
 /*Enable the log module*/
-#define LV_USE_LOG 1
+#define LV_USE_LOG 0
 #if LV_USE_LOG
 
     /*How important log should be added:
@@ -233,7 +233,7 @@
 
     /*1: Print the log with 'printf';
     *0: User need to register a callback with `lv_log_register_print_cb()`*/
-    #define LV_LOG_PRINTF 1
+    #define LV_LOG_PRINTF 0
 
     /*Enable/disable LV_LOG_TRACE in modules that produces a huge number of logs*/
     #define LV_LOG_TRACE_MEM        1
@@ -284,7 +284,7 @@
 #define LV_USE_REFR_DEBUG 0
 
 /*Change the built in (v)snprintf functions*/
-#define LV_SPRINTF_CUSTOM 1
+#define LV_SPRINTF_CUSTOM 0
 #if LV_SPRINTF_CUSTOM
     #define LV_SPRINTF_INCLUDE <stdio.h>
     #define lv_snprintf  snprintf
@@ -353,8 +353,8 @@
 #define LV_FONT_MONTSERRAT_8  0
 #define LV_FONT_MONTSERRAT_10 0
 #define LV_FONT_MONTSERRAT_12 0
-#define LV_FONT_MONTSERRAT_14 0
-#define LV_FONT_MONTSERRAT_16 1
+#define LV_FONT_MONTSERRAT_14 1
+#define LV_FONT_MONTSERRAT_16 0
 #define LV_FONT_MONTSERRAT_18 0
 #define LV_FONT_MONTSERRAT_20 0
 #define LV_FONT_MONTSERRAT_22 0
@@ -388,12 +388,12 @@
 #define LV_FONT_CUSTOM_DECLARE
 
 /*Always set a default font*/
-#define LV_FONT_DEFAULT &lv_font_montserrat_16
+#define LV_FONT_DEFAULT &lv_font_montserrat_14
 
 /*Enable handling large font and/or fonts with a lot of characters.
  *The limit depends on the font size, font face and bpp.
  *Compiler error will be triggered if a font needs it.*/
-#define LV_FONT_FMT_TXT_LARGE 1
+#define LV_FONT_FMT_TXT_LARGE 0
 
 /*Enables/disables support for compressed fonts.*/
 #define LV_USE_FONT_COMPRESSED 1
@@ -511,7 +511,7 @@
 
 #define LV_USE_CALENDAR   1
 #if LV_USE_CALENDAR
-    #define LV_CALENDAR_WEEK_STARTS_MONDAY 1
+    #define LV_CALENDAR_WEEK_STARTS_MONDAY 0
     #if LV_CALENDAR_WEEK_STARTS_MONDAY
         #define LV_CALENDAR_DEFAULT_DAY_NAMES {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"}
     #else

@@ -130,7 +130,7 @@ void lv_port_disp_init(void)
 static void disp_init(void)
 {
     LCD.initializeDisplay();
-    LCD.SetBacklight(500);
+    LCD.SetBacklight(1000);
 }
 
 volatile bool disp_flush_enabled = true;

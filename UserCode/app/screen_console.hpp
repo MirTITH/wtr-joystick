@@ -15,10 +15,8 @@
 extern "C" {
 #endif
 
-#include "lvgl_thread.hpp"
+void StartScreenConsoleThread();
 
 #ifdef __cplusplus
 }
 #endif
-
-void StartScreenConsoleThread();
