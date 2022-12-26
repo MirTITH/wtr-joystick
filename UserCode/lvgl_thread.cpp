@@ -37,5 +37,5 @@ void StartLvglMainThread()
 {
     // LvglMutex = xSemaphoreCreateRecursiveMutexStatic(&LvglMutexBuffer);
     LvglMutex = xSemaphoreCreateRecursiveMutex();
-    xTaskCreate(LvglMainThreadEntry, "lvgl_thread", 2048, nullptr, osPriorityBelowNormal, &thread_handle);
+    xTaskCreate(LvglMainThreadEntry, "lvgl_thread", 2048, nullptr, osPriorityNormal, &thread_handle);
 }

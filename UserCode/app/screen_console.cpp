@@ -15,7 +15,7 @@
 
 using namespace std;
 
-extern const lv_font_t LXWKMono_16;
+// extern const lv_font_t LXWKMono_16;
 
 void ScreenConsoleThread(void *argument)
 {
@@ -26,7 +26,7 @@ void ScreenConsoleThread(void *argument)
 
     LvglLock();
     static auto text_area = lv_textarea_create(lv_scr_act());
-    lv_obj_set_style_text_font(text_area, &LXWKMono_16, 0);
+    // lv_obj_set_style_text_font(text_area, &LXWKMono_16, 0);
     lv_obj_set_height(text_area, lv_pct(95));
     lv_obj_set_width(text_area, lv_pct(95));
     lv_obj_align(text_area, LV_ALIGN_CENTER, 0, 0);
