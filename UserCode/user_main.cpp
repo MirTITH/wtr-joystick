@@ -43,13 +43,7 @@ void StartDefaultTask(void *argument)
     MX_USB_DEVICE_Init();
     FreeRTOS_IO_Init();
 
-    try {
-        StartLvglMainThread();
-    } catch (const std::exception &e) {
-        wtrErrorLine() << "Err. Start lvgl thread failed :" << e.what() << endl;
-    } catch (...) {
-        wtrErrorLine() << "Err. Start lvgl thread failed : Unknown reason." << endl;
-    }
+    StartLvglMainThread();
 
     // 删除当前线程
     vTaskDelete(nullptr);

@@ -20,7 +20,9 @@
   },
   "targets": {
     "Debug": {
-      "excludeList": [],
+      "excludeList": [
+        "CubeMX/STM32CubeIDE/Application/User/Core/syscalls.c"
+      ],
       "toolchain": "GCC",
       "compileConfig": {
         "cpuType": "Cortex-M7",

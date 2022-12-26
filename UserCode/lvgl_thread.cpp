@@ -1,25 +1,8 @@
 #include "lvgl_thread.hpp"
-#include <exception>
-#include <string>
 #include "screen_console.hpp"
 
-SemaphoreHandle_t LvglMutex       = nullptr;
+static SemaphoreHandle_t LvglMutex;
 static TaskHandle_t thread_handle = nullptr;
-
-class StrException : public std::exception
-{
-private:
-    const char *_str;
-
-public:
-    StrException(const char *str)
-        : _str(str){};
-
-    const char *what() const noexcept
-    {
-        return _str;
-    }
-};
 
 static void LvglMainThreadEntry(void *argument)
 {
@@ -42,31 +25,17 @@ static void LvglMainThreadEntry(void *argument)
 
 BaseType_t LvglLock(TickType_t block_time)
 {
-    return xSemaphoreTake(LvglMutex, block_time);
+    return xSemaphoreTakeRecursive(LvglMutex, block_time);
 }
 
 BaseType_t LvglUnlock()
 {
-    return xSemaphoreGive(LvglMutex);
+    return xSemaphoreGiveRecursive(LvglMutex);
 }
 
 void StartLvglMainThread()
 {
-    if (LvglMutex == nullptr) {
-        LvglMutex = xSemaphoreCreateMutex();
-        if (LvglMutex == nullptr) {
-            throw StrException("Unable to create mutex.");
-        }
-    } else {
-        throw StrException("mutex != nullptr.");
-    }
-
-    if (thread_handle == nullptr) {
-        auto result = xTaskCreate(LvglMainThreadEntry, "lvgl_thread", 512, nullptr, osPriorityBelowNormal, &thread_handle);
-        if (result != pdPASS) {
-            throw StrException("Unable to create lvgl_thread.");
-        }
-    } else {
-        throw StrException("thread_handle != nullptr.");
-    }
+    // LvglMutex = xSemaphoreCreateRecursiveMutexStatic(&LvglMutexBuffer);
+    LvglMutex = xSemaphoreCreateRecursiveMutex();
+    xTaskCreate(LvglMainThreadEntry, "lvgl_thread", 2048, nullptr, osPriorityBelowNormal, &thread_handle);
 }

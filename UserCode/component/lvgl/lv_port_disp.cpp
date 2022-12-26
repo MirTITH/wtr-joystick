@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include "STM32_ILI9481.hpp"
 #include "dma.h"
+#include "cmsis_os.h"
 
 /*********************
  *      DEFINES
@@ -52,6 +53,12 @@ static void dma_cplt_cb(DMA_HandleTypeDef *hdma)
 {
     (void)hdma;
     lv_disp_flush_ready(&disp_drv);
+}
+
+static void wait_callback(struct _lv_disp_drv_t *disp_drv)
+{
+    (void)disp_drv;
+    osThreadYield();
 }
 
 void lv_port_disp_init(void)
@@ -107,6 +114,7 @@ void lv_port_disp_init(void)
 
     /*Used to copy the buffer's content to the display*/
     disp_drv.flush_cb = disp_flush;
+    disp_drv.wait_cb  = wait_callback;
 
     /*Set a display buffer*/
     disp_drv.draw_buf = &draw_buf_dsc_2;
@@ -160,6 +168,16 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
     (void)disp_drv;
     if (disp_flush_enabled) {
         LCD.setAddrWindow(area->x1, area->y1, area->x2, area->y2);
+
+        // int total = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1);
+
+        // while (total > 0) {
+        //     LCD.WriteData16(*((uint16_t *)color_p));
+        //     total--;
+        //     color_p++;
+        // }
+
+        // lv_disp_flush_ready(disp_drv);
 
         HAL_DMA_Start_IT(&hdma_memtomem_dma1_stream0,
                          (uint32_t)color_p,

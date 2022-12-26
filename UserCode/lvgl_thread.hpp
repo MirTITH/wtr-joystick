@@ -18,5 +18,3 @@ void StartLvglMainThread();
 #ifdef __cplusplus
 }
 #endif
-
-
