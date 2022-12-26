@@ -102,8 +102,8 @@ void lv_port_disp_init(void)
     /*Set up the functions to access to your display*/
 
     /*Set the resolution of the display*/
-    disp_drv.hor_res = LCD._width;
-    disp_drv.ver_res = LCD._height;
+    disp_drv.hor_res = LCD.Width;
+    disp_drv.ver_res = LCD.Height;
 
     /*Used to copy the buffer's content to the display*/
     disp_drv.flush_cb = disp_flush;
@@ -115,6 +115,9 @@ void lv_port_disp_init(void)
      * Note that, in lv_conf.h you can enable GPUs that has built-in support in LVGL.
      * But if you have a different GPU you can use with this callback.*/
     // disp_drv.gpu_fill_cb = gpu_fill;
+
+    disp_drv.rotated = 3;
+    // disp_drv.sw_rotate = 1;
 
     /*Finally register the driver*/
     lv_disp_drv_register(&disp_drv);

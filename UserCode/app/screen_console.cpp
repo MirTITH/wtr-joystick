@@ -15,6 +15,8 @@
 
 using namespace std;
 
+extern const lv_font_t LXWKMono_16;
+
 void ScreenConsoleThread(void *argument)
 {
     (void)argument;
@@ -24,6 +26,7 @@ void ScreenConsoleThread(void *argument)
 
     LvglLock();
     static auto text_area = lv_textarea_create(lv_scr_act());
+    lv_obj_set_style_text_font(text_area, &LXWKMono_16, 0);
     lv_obj_set_height(text_area, lv_pct(95));
     lv_obj_set_width(text_area, lv_pct(95));
     lv_obj_align(text_area, LV_ALIGN_CENTER, 0, 0);
@@ -37,7 +40,7 @@ void ScreenConsoleThread(void *argument)
             LvglLock();
             // str = "Hello world! Text area " + to_string(counter) + "\n";
             counter++;
-            lv_textarea_add_text(text_area, "Hello world! Text area ");
+            lv_textarea_add_text(text_area, "Hello, world! 你好，世界！（霞鹜文楷体）");
             lv_textarea_add_text(text_area, to_string(counter).c_str());
             lv_textarea_add_char(text_area, '\n');
             LvglUnlock();

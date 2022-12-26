@@ -15,14 +15,13 @@
 class LCD_ILI9481 : public LcdIoFmc
 {
 private:
-    const int Width = 320;  // Physical width
-    const int Height = 480; // Physical height
-
     void delay(uint32_t delay_ms);
 
 public:
-    int _width = Width;   // becasue we can change these later if needed
-    int _height = Height; // eg. in setRotation()
+    const int Width  = 320;    // Physical width
+    const int Height = 480;    // Physical height
+    int _width       = Width;  // becasue we can change these later if needed
+    int _height      = Height; // eg. in setRotation()
 
     enum class Rotation {
         portrait,
