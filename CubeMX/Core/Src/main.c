@@ -104,9 +104,9 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_FMC_Init();
   MX_TIM3_Init();
   MX_SDMMC1_SD_Init();
+  MX_FMC_Init();
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
 
