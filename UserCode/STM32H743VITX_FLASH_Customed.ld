@@ -76,7 +76,7 @@ SECTIONS
     . = ALIGN(4);
     _sbss_d2 = .;         /* define a global symbol at ram_d2 bss start */
     
-    *lv_mem.o(.bss.work_mem_int*)
+    /* *lv_mem.o(.bss.work_mem_int*) */
     *lv_port_disp.o(.bss.*buf_1*)
     *lv_port_disp.o(.bss.*buf_2*)
 
