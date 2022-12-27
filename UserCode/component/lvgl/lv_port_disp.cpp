@@ -10,7 +10,6 @@
  *      INCLUDES
  *********************/
 #include "lv_port_disp.h"
-#include <stdbool.h>
 #include "STM32_ILI9481.hpp"
 #include "dma.h"
 #include "cmsis_os.h"

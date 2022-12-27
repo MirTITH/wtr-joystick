@@ -12,7 +12,6 @@
 #include "custom_cli_command.h"
 #include "cmsis_os.h"
 #include "FreeRTOS_CLI.h"
-#include <iostream>
 #include <string>
 #include <string.h>
 #include "ff.h"
