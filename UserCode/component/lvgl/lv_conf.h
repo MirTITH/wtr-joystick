@@ -51,26 +51,26 @@
 #endif  /*LV_USE_BUILTIN_MALLOC*/
 
 /*Enable lv_memcpy_builtin, lv_memset_builtin, lv_strlen_builtin, lv_strncpy_builtin*/
-#define LV_USE_BUILTIN_MEMCPY 1
+#define LV_USE_BUILTIN_MEMCPY 0
 
 /*Enable and configure the built-in (v)snprintf */
-#define LV_USE_BUILTIN_SNPRINTF 1
+#define LV_USE_BUILTIN_SNPRINTF 0
 #if LV_USE_BUILTIN_SNPRINTF
     #define LV_SPRINTF_USE_FLOAT 0
 #endif  /*LV_USE_BUILTIN_SNPRINTF*/
 
-#define LV_STDLIB_INCLUDE <stdint.h>
-#define LV_STDIO_INCLUDE  <stdint.h>
-#define LV_STRING_INCLUDE <stdint.h>
+#define LV_STDLIB_INCLUDE <stdlib.h>
+#define LV_STDIO_INCLUDE  <stdio.h>
+#define LV_STRING_INCLUDE <string.h>
 #define LV_MALLOC       lv_malloc_builtin
 #define LV_REALLOC      lv_realloc_builtin
 #define LV_FREE         lv_free_builtin
-#define LV_MEMSET       lv_memset_builtin
-#define LV_MEMCPY       lv_memcpy_builtin
-#define LV_SNPRINTF     lv_snprintf_builtin
-#define LV_VSNPRINTF    lv_vsnprintf_builtin
-#define LV_STRLEN       lv_strlen_builtin
-#define LV_STRNCPY      lv_strncpy_builtin
+#define LV_MEMSET       memset
+#define LV_MEMCPY       memcpy
+#define LV_SNPRINTF     snprintf
+#define LV_VSNPRINTF    vsnprintf
+#define LV_STRLEN       strlen
+#define LV_STRNCPY      strncpy
 
 /*====================
    HAL SETTINGS
@@ -89,7 +89,7 @@
 
 /*Default Dot Per Inch. Used to initialize default sizes such as widgets sized, style paddings.
  *(Not so important, you can adjust it to modify default sizes and spaces)*/
-#define LV_DPI_DEF 130     /*[px/inch]*/
+#define LV_DPI_DEF 165     /*[px/inch]*/
 
 /*========================
  * DRAW CONFIGURATION
