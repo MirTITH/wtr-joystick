@@ -14,6 +14,8 @@ extern "C" {
  *      INCLUDES
  *********************/
 #include "lv_draw_sw_blend.h"
+#if LV_USE_DRAW_SW
+
 #include "../lv_draw.h"
 #include "../../misc/lv_area.h"
 #include "../../misc/lv_color.h"
@@ -38,9 +40,7 @@ typedef struct {
 
 typedef struct {
     lv_draw_layer_ctx_t base_draw;
-
-    uint32_t buf_size_bytes: 31;
-    uint32_t has_alpha : 1;
+    uint32_t buf_size_bytes;
 } lv_draw_sw_layer_ctx_t;
 
 /**********************
@@ -68,11 +68,13 @@ LV_ATTRIBUTE_FAST_MEM void lv_draw_sw_line(struct _lv_draw_ctx_t * draw_ctx, con
                                            const lv_point_t * point1, const lv_point_t * point2);
 
 void lv_draw_sw_polygon(struct _lv_draw_ctx_t * draw_ctx, const lv_draw_rect_dsc_t * draw_dsc,
-                        const lv_point_t * points, uint16_t point_cnt);
+                        const lv_point_t points[], uint16_t point_cnt);
 
 void lv_draw_sw_buffer_copy(lv_draw_ctx_t * draw_ctx,
                             void * dest_buf, lv_coord_t dest_stride, const lv_area_t * dest_area,
                             void * src_buf, lv_coord_t src_stride, const lv_area_t * src_area);
+
+void lv_draw_sw_buffer_convert(lv_draw_ctx_t * draw_ctx);
 
 void lv_draw_sw_transform(lv_draw_ctx_t * draw_ctx, const lv_area_t * dest_area, const void * src_buf,
                           lv_coord_t src_w, lv_coord_t src_h, lv_coord_t src_stride,
@@ -96,6 +98,8 @@ void lv_draw_sw_layer_destroy(lv_draw_ctx_t * draw_ctx, lv_draw_layer_ctx_t * la
 /**********************
  *      MACROS
  **********************/
+
+#endif /*LV_USE_DRAW_SW*/
 
 #ifdef __cplusplus
 } /*extern "C"*/

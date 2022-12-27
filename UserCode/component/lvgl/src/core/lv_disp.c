@@ -93,7 +93,7 @@ lv_obj_t * lv_disp_get_layer_top(lv_disp_t * disp)
 {
     if(!disp) disp = lv_disp_get_default();
     if(!disp) {
-        LV_LOG_WARN("lv_layer_top: no display registered to get its top layer");
+        LV_LOG_WARN("no display registered to get its top layer");
         return NULL;
     }
 
@@ -110,7 +110,7 @@ lv_obj_t * lv_disp_get_layer_sys(lv_disp_t * disp)
 {
     if(!disp) disp = lv_disp_get_default();
     if(!disp) {
-        LV_LOG_WARN("lv_layer_sys: no display registered to get its sys. layer");
+        LV_LOG_WARN("no display registered to get its sys layer");
         return NULL;
     }
 
@@ -210,6 +210,18 @@ void lv_disp_set_bg_opa(lv_disp_t * disp, lv_opa_t opa)
     _lv_inv_area(disp, &a);
 }
 
+lv_color_t lv_disp_get_chroma_key_color(lv_disp_t * disp)
+{
+
+    if(!disp) disp = lv_disp_get_default();
+    if(!disp) {
+        LV_LOG_WARN("no display registered");
+        return lv_color_hex(0x00ff00);
+    }
+
+    return disp->driver->color_chroma_key;
+}
+
 /**
  * Switch screen with animation
  * @param scr pointer to the new screen to load
@@ -220,7 +232,6 @@ void lv_disp_set_bg_opa(lv_disp_t * disp, lv_opa_t opa)
  */
 void lv_scr_load_anim(lv_obj_t * new_scr, lv_scr_load_anim_t anim_type, uint32_t time, uint32_t delay, bool auto_del)
 {
-
     lv_disp_t * d = lv_obj_get_disp(new_scr);
     lv_obj_t * act_scr = lv_scr_act();
 
@@ -261,7 +272,9 @@ void lv_scr_load_anim(lv_obj_t * new_scr, lv_scr_load_anim_t anim_type, uint32_t
 
     /*Shortcut for immediate load*/
     if(time == 0 && delay == 0) {
+
         scr_load_internal(new_scr);
+        if(auto_del) lv_obj_del(act_scr);
         return;
     }
 
@@ -390,7 +403,7 @@ void lv_disp_trig_activity(lv_disp_t * disp)
 {
     if(!disp) disp = lv_disp_get_default();
     if(!disp) {
-        LV_LOG_WARN("lv_disp_trig_activity: no display registered");
+        LV_LOG_WARN("no display registered");
         return;
     }
 
@@ -405,7 +418,7 @@ void lv_disp_clean_dcache(lv_disp_t * disp)
 {
     if(!disp) disp = lv_disp_get_default();
     if(!disp) {
-        LV_LOG_WARN("lv_disp_clean_dcache: no display registered");
+        LV_LOG_WARN("no display registered");
         return;
     }
 
@@ -455,7 +468,7 @@ lv_timer_t * _lv_disp_get_refr_timer(lv_disp_t * disp)
 {
     if(!disp) disp = lv_disp_get_default();
     if(!disp) {
-        LV_LOG_WARN("lv_disp_get_refr_timer: no display registered");
+        LV_LOG_WARN("no display registered");
         return NULL;
     }
 

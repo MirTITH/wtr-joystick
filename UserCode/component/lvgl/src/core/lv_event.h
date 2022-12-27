@@ -14,6 +14,10 @@ extern "C" {
  *      INCLUDES
  *********************/
 #include <stdbool.h>
+#include "../misc/lv_area.h"
+#include "lv_obj_draw.h"
+#include "lv_obj_class.h"
+#include "../hal/lv_hal_indev.h"
 
 /*********************
  *      DEFINES
@@ -42,6 +46,7 @@ typedef enum {
     LV_EVENT_CLICKED,             /**< Called on release if not scrolled (regardless to long press)*/
     LV_EVENT_RELEASED,            /**< Called in every cases when the object has been released*/
     LV_EVENT_SCROLL_BEGIN,        /**< Scrolling begins. The event parameter is a pointer to the animation of the scroll. Can be modified*/
+    LV_EVENT_SCROLL_THROW_BEGIN,
     LV_EVENT_SCROLL_END,          /**< Scrolling ends*/
     LV_EVENT_SCROLL,              /**< Scrolling*/
     LV_EVENT_GESTURE,             /**< A gesture is detected. Get the gesture with `lv_indev_get_gesture_dir(lv_indev_get_act());` */
@@ -83,6 +88,13 @@ typedef enum {
     LV_EVENT_STYLE_CHANGED,       /**< Object's style has changed*/
     LV_EVENT_LAYOUT_CHANGED,      /**< The children position has changed due to a layout recalculation*/
     LV_EVENT_GET_SELF_SIZE,       /**< Get the internal size of a widget*/
+
+    /** Events of optional LVGL components*/
+#if LV_USE_MSG
+
+    LV_EVENT_MSG_RECEIVED,
+
+#endif // LV_USE_MSG
 
     _LV_EVENT_LAST,               /** Number of default events*/
 

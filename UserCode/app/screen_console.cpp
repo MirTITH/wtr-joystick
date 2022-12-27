@@ -12,7 +12,6 @@
 #include "screen_console.hpp"
 #include "lvgl_thread.hpp"
 #include <string>
-#include "lv_tiny_ttf.h"
 
 using namespace std;
 
@@ -26,17 +25,17 @@ void ScreenConsoleThread(void *argument)
     int counter = 0;
 
     LvglLock();
-    // static lv_style_t style;
-    // lv_style_init(&style);
-    lv_font_t *font = lv_tiny_ttf_create_file("0:wtr-controller/fonts/NotoSansSC-Regular.otf", 30);
-    // lv_style_set_text_font(&style, font);
-    // lv_style_set_text_align(&style, LV_TEXT_ALIGN_CENTER);
+    static lv_style_t style;
+    lv_style_init(&style);
+    // lv_font_t *font = lv_freetype_font_create("0:wtr-controller/fonts/LXGWWenKaiMonoGB-Regular.ttf", 20, LV_FREETYPE_FONT_STYLE_NORMAL);
+    lv_font_t *font = lv_freetype_font_create("0:wtr-controller/fonts/LXGWWenKaiMono-Bold.ttf", 18, LV_FREETYPE_FONT_STYLE_NORMAL);
+    lv_style_set_text_font(&style, font);
+    lv_style_set_height(&style, lv_pct(95));
+    lv_style_set_width(&style, lv_pct(95));
+    lv_style_set_align(&style, LV_ALIGN_CENTER);
 
     static auto text_area = lv_textarea_create(lv_scr_act());
-    lv_obj_set_style_text_font(text_area, font, 0);
-    lv_obj_set_height(text_area, lv_pct(95));
-    lv_obj_set_width(text_area, lv_pct(95));
-    lv_obj_align(text_area, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_add_style(text_area, &style, 0);
     lv_textarea_set_cursor_click_pos(text_area, false);
     LvglUnlock();
 
@@ -47,7 +46,8 @@ void ScreenConsoleThread(void *argument)
             LvglLock();
             // str = "Hello world! Text area " + to_string(counter) + "\n";
             counter++;
-            lv_textarea_add_text(text_area, "Hello, world! 你好，世界！");
+            lv_textarea_add_text(text_area, "Hello, world! 你好，世界！( •̀ ω •́ )y");
+            // lv_textarea_add_text(text_area, "Hello, world!");
             lv_textarea_add_text(text_area, to_string(counter).c_str());
             lv_textarea_add_char(text_area, '\n');
             LvglUnlock();
@@ -64,5 +64,5 @@ void ScreenConsoleThread(void *argument)
 
 void StartScreenConsoleThread()
 {
-    xTaskCreate(ScreenConsoleThread, "ScreenConsole", 2048, nullptr, osPriorityBelowNormal, nullptr);
+    xTaskCreate(ScreenConsoleThread, "ScreenConsole", 8192, nullptr, osPriorityBelowNormal, nullptr);
 }

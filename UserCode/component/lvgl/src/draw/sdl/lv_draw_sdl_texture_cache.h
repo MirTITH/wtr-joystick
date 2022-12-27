@@ -16,9 +16,9 @@ extern "C" {
 
 #include "../../lv_conf_internal.h"
 
-#if LV_USE_GPU_SDL
+#if LV_USE_DRAW_SDL
 
-#include LV_GPU_SDL_INCLUDE_PATH
+#include LV_DRAW_SDL_INCLUDE_PATH
 #include "lv_draw_sdl.h"
 #include "lv_draw_sdl_priv.h"
 #include "../../draw/lv_img_decoder.h"
@@ -50,7 +50,6 @@ typedef enum {
     LV_GPU_CACHE_KEY_MAGIC_RECT_BG = 0x31,
     LV_GPU_CACHE_KEY_MAGIC_RECT_SHADOW = 0x32,
     LV_GPU_CACHE_KEY_MAGIC_RECT_BORDER = 0x33,
-    LV_GPU_CACHE_KEY_MAGIC_RECT_GRAD = 0x34,
     LV_GPU_CACHE_KEY_MAGIC_FONT_GLYPH = 0x41,
     LV_GPU_CACHE_KEY_MAGIC_MASK = 0x51,
 } lv_sdl_cache_key_magic_t;
@@ -94,7 +93,7 @@ lv_draw_sdl_cache_key_head_img_t * lv_draw_sdl_texture_img_key_create(const void
 /**********************
  *      MACROS
  **********************/
-#endif /*LV_USE_GPU_SDL*/
+#endif /*LV_USE_DRAW_SDL*/
 
 #ifdef __cplusplus
 } /*extern "C"*/

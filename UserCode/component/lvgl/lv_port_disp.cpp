@@ -95,7 +95,7 @@ void lv_port_disp_init(void)
 
     /* Example for 2) */
     static lv_disp_draw_buf_t draw_buf_dsc_2;
-    const int buf_size = 49152;
+    const int buf_size = 256 * 1024 / 2 / 2;
     static lv_color_t buf_1[buf_size];                              /*A buffer for 10 rows*/
     static lv_color_t buf_2[buf_size];                              /*An other buffer for 10 rows*/
     lv_disp_draw_buf_init(&draw_buf_dsc_2, buf_1, buf_2, buf_size); /*Initialize the display buffer*/
@@ -173,8 +173,8 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 
         // while (total > 0) {
         //     LCD.WriteData16(*((uint16_t *)color_p));
-        //     total--;
         //     color_p++;
+        //     total--;
         // }
 
         // lv_disp_flush_ready(disp_drv);

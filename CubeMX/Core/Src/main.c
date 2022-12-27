@@ -274,9 +274,6 @@ void MPU_Config(void)
   MPU_InitStruct.Number = MPU_REGION_NUMBER5;
   MPU_InitStruct.BaseAddress = 0x38000000;
   MPU_InitStruct.Size = MPU_REGION_SIZE_64KB;
-  MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL1;
-  MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
-  MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;
 
   HAL_MPU_ConfigRegion(&MPU_InitStruct);
   /* Enables the MPU */

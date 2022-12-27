@@ -62,6 +62,17 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
+  .dtcmram :
+  {
+    . = ALIGN(4);
+    _sbss_dtcm = .;         /* define a global symbol at ram_d1 bss start */
+
+    *heap_4.o(.bss.ucHeap*)
+
+    . = ALIGN(4);
+    _ebss_dtcm = .;         /* define a global symbol at ram_d1 bss end */
+  } >DTCMRAM
+
   .ram_d1 :
   {
     . = ALIGN(4);
@@ -88,8 +99,6 @@ SECTIONS
   {
     . = ALIGN(4);
     _sbss_d3 = .;         /* define a global symbol at ram_d3 bss start */
-
-    *heap_4.o(.bss.ucHeap*)
 
     . = ALIGN(4);
     _ebss_d3 = .;         /* define a global symbol at ram_d3 bss end */

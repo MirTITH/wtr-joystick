@@ -14,6 +14,7 @@
 #include "lv_theme.h"
 #include "../misc/lv_assert.h"
 #include "../draw/lv_draw.h"
+#include "../draw/lv_img_cache_builtin.h"
 #include "../misc/lv_anim.h"
 #include "../misc/lv_timer.h"
 #include "../misc/lv_async.h"
@@ -21,13 +22,29 @@
 #include "../misc/lv_gc.h"
 #include "../misc/lv_math.h"
 #include "../misc/lv_log.h"
+#include "../libs/bmp/lv_bmp.h"
+#include "../libs/ffmpeg/lv_ffmpeg.h"
+#include "../libs/freetype/lv_freetype.h"
+#include "../libs/fsdrv/lv_fsdrv.h"
+#include "../libs/gif/lv_gif.h"
+#include "../libs/png/lv_png.h"
+#include "../libs/sjpg/lv_sjpg.h"
+#include "../layouts/flex/lv_flex.h"
+#include "../layouts/grid/lv_grid.h"
+
+#if LV_USE_BUILTIN_MALLOC
+    #include "../misc/lv_malloc_builtin.h"
+#endif
 #include "../hal/lv_hal.h"
-#include "../extra/lv_extra.h"
 #include <stdint.h>
 #include <string.h>
 
 #if LV_USE_GPU_STM32_DMA2D
     #include "../draw/stm32_dma2d/lv_gpu_stm32_dma2d.h"
+#endif
+
+#if LV_USE_GPU_GD32_IPA
+    #include "../draw/gd32_ipa/lv_gpu_gd32_ipa.h"
 #endif
 
 #if LV_USE_GPU_SWM341_DMA2D
@@ -102,8 +119,9 @@ void lv_init(void)
     LV_LOG_INFO("begin");
 
     /*Initialize the misc modules*/
-    lv_mem_init();
-
+#if LV_USE_BUILTIN_MALLOC
+    lv_mem_init_builtin();
+#endif
     _lv_timer_core_init();
 
     _lv_fs_init();
@@ -117,6 +135,11 @@ void lv_init(void)
 #if LV_USE_GPU_STM32_DMA2D
     /*Initialize DMA2D GPU*/
     lv_draw_stm32_dma2d_init();
+#endif
+
+#if LV_USE_GPU_GD32_IPA
+    /*Initialize IPA GPU*/
+    lv_draw_gd32_ipa_init();
 #endif
 
 #if LV_USE_GPU_SWM341_DMA2D
@@ -136,11 +159,11 @@ void lv_init(void)
     _lv_refr_init();
 
     _lv_img_decoder_init();
-#if LV_IMG_CACHE_DEF_SIZE
-    lv_img_cache_set_size(LV_IMG_CACHE_DEF_SIZE);
-#endif
+
+    _lv_img_cache_builtin_init();
+
     /*Test if the IDE has UTF-8 encoding*/
-    char * txt = "Á";
+    const char * txt = "Á";
 
     uint8_t * txt_u8 = (uint8_t *)txt;
     if(txt_u8[0] != 0xc3 || txt_u8[1] != 0x81 || txt_u8[2] != 0x00) {
@@ -176,21 +199,78 @@ void lv_init(void)
     LV_LOG_WARN("Log level is set to 'Trace' which makes LVGL much slower");
 #endif
 
-    lv_extra_init();
+
+#if LV_USE_FLEX
+    lv_flex_init();
+#endif
+
+#if LV_USE_GRID
+    lv_grid_init();
+#endif
+
+#if LV_USE_MSG
+    lv_msg_init();
+#endif
+
+#if LV_USE_FS_FATFS != '\0'
+    lv_fs_fatfs_init();
+#endif
+
+#if LV_USE_FS_STDIO != '\0'
+    lv_fs_stdio_init();
+#endif
+
+#if LV_USE_FS_POSIX != '\0'
+    lv_fs_posix_init();
+#endif
+
+#if LV_USE_FS_WIN32 != '\0'
+    lv_fs_win32_init();
+#endif
+
+#if LV_USE_PNG
+    lv_png_init();
+#endif
+
+#if LV_USE_SJPG
+    lv_split_jpeg_init();
+#endif
+
+#if LV_USE_BMP
+    lv_bmp_init();
+#endif
+
+    /*Make FFMPEG last because the last converter will be checked first and
+     *it's superior to any other */
+#if LV_USE_FFMPEG
+    lv_ffmpeg_init();
+#endif
+
+#if LV_USE_FREETYPE
+    /*Init freetype library*/
+#  if LV_FREETYPE_CACHE_SIZE >= 0
+    lv_freetype_init(LV_FREETYPE_CACHE_FT_FACES, LV_FREETYPE_CACHE_FT_SIZES, LV_FREETYPE_CACHE_SIZE);
+#  else
+    lv_freetype_init(0, 0, 0);
+#  endif
+#endif
 
     lv_initialized = true;
 
     LV_LOG_TRACE("finished");
 }
 
-#if LV_ENABLE_GC || !LV_MEM_CUSTOM
+#if LV_ENABLE_GC || LV_USE_BUILTIN_MALLOC
 
 void lv_deinit(void)
 {
     _lv_gc_clear_roots();
 
     lv_disp_set_default(NULL);
-    lv_mem_deinit();
+
+#if LV_USE_BUILTIN_MALLOC
+    lv_mem_deinit_builtin();
+#endif
     lv_initialized = false;
 
     LV_LOG_INFO("lv_deinit done");
@@ -278,6 +358,11 @@ void lv_obj_add_state(lv_obj_t * obj, lv_state_t state)
 
     lv_state_t new_state = obj->state | state;
     if(obj->state != new_state) {
+
+        if(new_state & LV_STATE_DISABLED) {
+            lv_indev_reset(NULL, obj);
+        }
+
         lv_obj_set_state(obj, new_state);
     }
 }
@@ -324,7 +409,7 @@ bool lv_obj_has_state(const lv_obj_t * obj, lv_state_t state)
     return obj->state & state ? true : false;
 }
 
-void * lv_obj_get_group(const lv_obj_t * obj)
+lv_group_t * lv_obj_get_group(const lv_obj_t * obj)
 {
     LV_ASSERT_OBJ(obj, MY_CLASS);
 
@@ -343,11 +428,11 @@ void lv_obj_allocate_spec_attr(lv_obj_t * obj)
     if(obj->spec_attr == NULL) {
         static uint32_t x = 0;
         x++;
-        obj->spec_attr = lv_mem_alloc(sizeof(_lv_obj_spec_attr_t));
+        obj->spec_attr = lv_malloc(sizeof(_lv_obj_spec_attr_t));
         LV_ASSERT_MALLOC(obj->spec_attr);
         if(obj->spec_attr == NULL) return;
 
-        lv_memset_00(obj->spec_attr, sizeof(_lv_obj_spec_attr_t));
+        lv_memzero(obj->spec_attr, sizeof(_lv_obj_spec_attr_t));
 
         obj->spec_attr->scroll_dir = LV_DIR_ALL;
         obj->spec_attr->scrollbar_mode = LV_SCROLLBAR_MODE_AUTO;
@@ -448,15 +533,15 @@ static void lv_obj_destructor(const lv_obj_class_t * class_p, lv_obj_t * obj)
 
     if(obj->spec_attr) {
         if(obj->spec_attr->children) {
-            lv_mem_free(obj->spec_attr->children);
+            lv_free(obj->spec_attr->children);
             obj->spec_attr->children = NULL;
         }
         if(obj->spec_attr->event_dsc) {
-            lv_mem_free(obj->spec_attr->event_dsc);
+            lv_free(obj->spec_attr->event_dsc);
             obj->spec_attr->event_dsc = NULL;
         }
 
-        lv_mem_free(obj->spec_attr);
+        lv_free(obj->spec_attr);
         obj->spec_attr = NULL;
     }
 }
@@ -525,7 +610,7 @@ static void lv_obj_draw(lv_event_t * e)
         part_dsc.part = LV_PART_MAIN;
         lv_event_send(obj, LV_EVENT_DRAW_PART_BEGIN, &part_dsc);
 
-#if LV_DRAW_COMPLEX
+#if LV_USE_DRAW_MASKS
         /*With clip corner enabled draw the bg img separately to make it clipped*/
         bool clip_corner = (lv_obj_get_style_clip_corner(obj, LV_PART_MAIN) && draw_dsc.radius != 0) ? true : false;
         const void * bg_img_src = draw_dsc.bg_img_src;
@@ -537,9 +622,9 @@ static void lv_obj_draw(lv_event_t * e)
         lv_draw_rect(draw_ctx, &draw_dsc, &coords);
 
 
-#if LV_DRAW_COMPLEX
+#if LV_USE_DRAW_MASKS
         if(clip_corner) {
-            lv_draw_mask_radius_param_t * mp = lv_mem_buf_get(sizeof(lv_draw_mask_radius_param_t));
+            lv_draw_mask_radius_param_t * mp = lv_malloc(sizeof(lv_draw_mask_radius_param_t));
             lv_draw_mask_radius_init(mp, &obj->coords, draw_dsc.radius, false);
             /*Add the mask and use `obj+8` as custom id. Don't use `obj` directly because it might be used by the user*/
             lv_draw_mask_add(mp, obj + 8);
@@ -561,12 +646,12 @@ static void lv_obj_draw(lv_event_t * e)
         lv_draw_ctx_t * draw_ctx = lv_event_get_draw_ctx(e);
         draw_scrollbar(obj, draw_ctx);
 
-#if LV_DRAW_COMPLEX
+#if LV_USE_DRAW_MASKS
         if(lv_obj_get_style_clip_corner(obj, LV_PART_MAIN)) {
             lv_draw_mask_radius_param_t * param = lv_draw_mask_remove_custom(obj + 8);
             if(param) {
                 lv_draw_mask_free_param(param);
-                lv_mem_buf_release(param);
+                lv_free(param);
             }
         }
 #endif
@@ -665,7 +750,7 @@ static lv_res_t scrollbar_init_draw_dsc(lv_obj_t * obj, lv_draw_rect_dsc_t * dsc
         }
     }
 
-#if LV_DRAW_COMPLEX
+#if LV_USE_DRAW_MASKS
     dsc->shadow_opa = lv_obj_get_style_shadow_opa(obj, LV_PART_SCROLLBAR);
     if(dsc->shadow_opa > LV_OPA_MIN) {
         dsc->shadow_width = lv_obj_get_style_shadow_width(obj, LV_PART_SCROLLBAR);
@@ -860,14 +945,22 @@ static void lv_obj_set_state(lv_obj_t * obj, lv_state_t new_state)
     LV_ASSERT_OBJ(obj, MY_CLASS);
 
     lv_state_t prev_state = obj->state;
-    obj->state = new_state;
 
     _lv_style_state_cmp_t cmp_res = _lv_obj_style_state_compare(obj, prev_state, new_state);
     /*If there is no difference in styles there is nothing else to do*/
-    if(cmp_res == _LV_STYLE_STATE_CMP_SAME) return;
+    if(cmp_res == _LV_STYLE_STATE_CMP_SAME) {
+        obj->state = new_state;
+        return;
+    }
 
-    _lv_obj_style_transition_dsc_t * ts = lv_mem_buf_get(sizeof(_lv_obj_style_transition_dsc_t) * STYLE_TRANSITION_MAX);
-    lv_memset_00(ts, sizeof(_lv_obj_style_transition_dsc_t) * STYLE_TRANSITION_MAX);
+    /*Invalidate the object in their current state*/
+    lv_obj_invalidate(obj);
+
+    obj->state = new_state;
+
+
+    _lv_obj_style_transition_dsc_t * ts = lv_malloc(sizeof(_lv_obj_style_transition_dsc_t) * STYLE_TRANSITION_MAX);
+    lv_memzero(ts, sizeof(_lv_obj_style_transition_dsc_t) * STYLE_TRANSITION_MAX);
     uint32_t tsi = 0;
     uint32_t i;
     for(i = 0; i < obj->style_cnt && tsi < STYLE_TRANSITION_MAX; i++) {
@@ -912,7 +1005,7 @@ static void lv_obj_set_state(lv_obj_t * obj, lv_state_t new_state)
         _lv_obj_style_create_transition(obj, part_act, prev_state, new_state, &ts[i]);
     }
 
-    lv_mem_buf_release(ts);
+    lv_free(ts);
 
     if(cmp_res == _LV_STYLE_STATE_CMP_DIFF_REDRAW) {
         lv_obj_invalidate(obj);

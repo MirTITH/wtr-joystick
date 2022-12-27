@@ -1,5 +1,5 @@
 #include "../lv_conf_internal.h"
-#if LV_MEM_CUSTOM == 0
+#if LV_USE_BUILTIN_MALLOC
 
 #include <limits.h>
 #include "lv_tlsf.h"
@@ -10,7 +10,7 @@
 #undef  printf
 #define printf LV_LOG_ERROR
 
-#define TLSF_MAX_POOL_SIZE LV_MEM_SIZE
+#define TLSF_MAX_POOL_SIZE (LV_MEM_SIZE + LV_MEM_POOL_EXPAND_SIZE)
 
 #if !defined(_DEBUG)
     #define _DEBUG 0
@@ -1243,4 +1243,4 @@ void * lv_tlsf_realloc(lv_tlsf_t tlsf, void * ptr, size_t size)
     return p;
 }
 
-#endif /* LV_MEM_CUSTOM == 0 */
+#endif /* LV_USE_BUILTIN_MALLOC */

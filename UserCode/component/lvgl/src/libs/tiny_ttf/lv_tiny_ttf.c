@@ -16,13 +16,13 @@
 #define STBTT_HEAP_FACTOR_SIZE_32 50
 #define STBTT_HEAP_FACTOR_SIZE_128 20
 #define STBTT_HEAP_FACTOR_SIZE_DEFAULT 10
-#define STBTT_malloc(x,u)  ((void)(u),lv_mem_alloc(x))
-#define STBTT_free(x,u)    ((void)(u),lv_mem_free(x))
-#define TTF_CACHE_MALLOC(x)  (lv_mem_alloc(x))
-#define TTF_CACHE_REALLOC(x,y)  (lv_mem_realloc(x,y))
-#define TTF_CACHE_FREE(x)    (lv_mem_free(x))
-#define TTF_MALLOC(x)  (lv_mem_alloc(x))
-#define TTF_FREE(x)    (lv_mem_free(x))
+#define STBTT_malloc(x,u)  ((void)(u),lv_malloc(x))
+#define STBTT_free(x,u)    ((void)(u),lv_free(x))
+#define TTF_CACHE_MALLOC(x)  (lv_malloc(x))
+#define TTF_CACHE_REALLOC(x,y)  (lv_realloc(x,y))
+#define TTF_CACHE_FREE(x)    (lv_free(x))
+#define TTF_MALLOC(x)  (lv_malloc(x))
+#define TTF_FREE(x)    (lv_free(x))
 typedef void * ttf_cache_handle_t;
 typedef struct ttf_cache_entry {
     int key;

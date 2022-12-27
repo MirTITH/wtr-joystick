@@ -96,7 +96,9 @@
           "STM32H743xx",
           "STM32_THREAD_SAFE_STRATEGY=4",
           "LV_CONF_INCLUDE_SIMPLE",
-          "LV_LVGL_H_INCLUDE_SIMPLE"
+          "FT2_BUILD_LIBRARY",
+          "FT_CONFIG_MODULES_H=\"component/lvgl/src/libs/freetype/ftmodule.h\"",
+          "FT_CONFIG_OPTIONS_H=\"component/lvgl/src/libs/freetype/ftoption.h\""
         ]
       }
     }

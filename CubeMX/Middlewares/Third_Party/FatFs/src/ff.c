@@ -3502,7 +3502,7 @@ FRESULT f_open (
 }
 
 
-uint32_t totalBytesRead = 0;
+
 
 /*-----------------------------------------------------------------------*/
 /* Read File                                                             */
@@ -3596,7 +3596,7 @@ FRESULT f_read (
 		mem_cpy(rbuff, fp->buf + fp->fptr % SS(fs), rcnt);	/* Extract partial sector */
 #endif
 	}
-	totalBytesRead += *br;
+
 	LEAVE_FF(fs, FR_OK);
 }
 

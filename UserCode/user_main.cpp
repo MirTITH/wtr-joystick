@@ -20,6 +20,9 @@ uint8_t work_buff[16384];
 
 void SysInit()
 {
+    __HAL_RCC_D2SRAM1_CLK_ENABLE();
+    __HAL_RCC_D2SRAM2_CLK_ENABLE();
+    __HAL_RCC_D2SRAM3_CLK_ENABLE();
     // 各区域bss段的开始结束地址（定义在 ld 文件中）
     extern uint32_t _sbss_d1, _sbss_d2, _sbss_d3, _sbss_itcm;
     extern uint32_t _ebss_d1, _ebss_d2, _ebss_d3, _ebss_itcm;
@@ -56,7 +59,7 @@ void StartDefaultTask(void *argument)
     CLI_Start();
 
     // 删除当前线程
-    // vTaskDelete(nullptr);
+    vTaskDelete(nullptr);
 
     // UINT readSize;
 
@@ -82,18 +85,18 @@ void StartDefaultTask(void *argument)
     // printf("time:%lu\n", endTime - startTime);
     // printf("speed:%f KB/s\n", (float)totalReadSize / (endTime - startTime) * 1000);
 
-    uint32_t PreviousWakeTime = xTaskGetTickCount();
+    // uint32_t PreviousWakeTime = xTaskGetTickCount();
 
-    extern uint32_t totalBytesRead;
-    uint32_t lastTotalBytesRead = totalBytesRead;
+    // extern uint32_t totalBytesRead;
+    // uint32_t lastTotalBytesRead = totalBytesRead;
 
-    for (;;) {
-        // Log() << 1.0055 << endl;
-        // fmt::print("Hello\n");
-        // wtrDebug() << "Time:" << PreviousWakeTime << endl;
+    // for (;;) {
+    //     // Log() << 1.0055 << endl;
+    //     // fmt::print("Hello\n");
+    //     // wtrDebug() << "Time:" << PreviousWakeTime << endl;
 
-        printf("totalBytesRead: %lu speed: %f KB/s\n", totalBytesRead, (float)(totalBytesRead - lastTotalBytesRead) / 2000);
-        lastTotalBytesRead = totalBytesRead;
-        vTaskDelayUntil(&PreviousWakeTime, 2000);
-    }
+    //     printf("totalBytesRead: %lu speed: %f KB/s\n", totalBytesRead, (float)(totalBytesRead - lastTotalBytesRead) / 2000);
+    //     lastTotalBytesRead = totalBytesRead;
+    //     vTaskDelayUntil(&PreviousWakeTime, 2000);
+    // }
 }
