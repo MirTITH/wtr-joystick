@@ -50,9 +50,9 @@ void StartDefaultTask(void *argument)
     MX_USB_DEVICE_Init();
     FreeRTOS_IO_Init();
 
-    // vTaskDelay(3000);
-
+    // vTaskDelay(200);
     f_mount(&SDFatFS, (TCHAR const *)SDPath, 1);
+    // vTaskDelay(200);
 
     StartLvglMainThread();
 

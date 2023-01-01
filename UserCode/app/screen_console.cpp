@@ -25,16 +25,21 @@ void ScreenConsoleThread(void *argument)
     int counter = 0;
 
     LvglLock();
+    static auto text_area = lv_textarea_create(lv_scr_act());
     static lv_style_t style;
     lv_style_init(&style);
     // lv_font_t *font = lv_freetype_font_create("0:wtr-controller/fonts/LXGWWenKaiMonoGB-Regular.ttf", 20, LV_FREETYPE_FONT_STYLE_NORMAL);
-    lv_font_t *font = lv_freetype_font_create("0:wtr-controller/fonts/LXGWWenKaiMono-Bold.ttf", 18, LV_FREETYPE_FONT_STYLE_NORMAL);
-    lv_style_set_text_font(&style, font);
+    lv_font_t *font = lv_freetype_font_create("0:wtr-controller/fonts/LXGWWenKaiMono-Bold.ttf", 20, LV_FREETYPE_FONT_STYLE_NORMAL);
+    if (font != nullptr) {
+        lv_style_set_text_font(&style, font);
+    } else {
+        lv_textarea_add_text(text_area, "Failed to load font\n");
+    }
+
     lv_style_set_height(&style, lv_pct(95));
     lv_style_set_width(&style, lv_pct(95));
     lv_style_set_align(&style, LV_ALIGN_CENTER);
 
-    static auto text_area = lv_textarea_create(lv_scr_act());
     lv_obj_add_style(text_area, &style, 0);
     lv_textarea_set_cursor_click_pos(text_area, false);
     LvglUnlock();
