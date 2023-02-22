@@ -28,8 +28,9 @@ void ScreenConsoleThread(void *argument)
     static auto text_area = lv_textarea_create(lv_scr_act());
     static lv_style_t style;
     lv_style_init(&style);
+    lv_font_t *font = nullptr;
     // lv_font_t *font = lv_freetype_font_create("0:wtr-controller/fonts/LXGWWenKaiMonoGB-Regular.ttf", 20, LV_FREETYPE_FONT_STYLE_NORMAL);
-    lv_font_t *font = lv_freetype_font_create("0:wtr-controller/fonts/LXGWWenKaiMono-Bold.ttf", 20, LV_FREETYPE_FONT_STYLE_NORMAL);
+    // lv_font_t *font = lv_freetype_font_create("0:wtr-controller/fonts/LXGWWenKaiMono-Bold.ttf", 20, LV_FREETYPE_FONT_STYLE_NORMAL);
     if (font != nullptr) {
         lv_style_set_text_font(&style, font);
     } else {

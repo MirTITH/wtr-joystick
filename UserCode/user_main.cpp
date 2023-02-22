@@ -10,7 +10,7 @@
 #include "usb_reset.h"
 #include "wtr_log.hpp"
 #include "lvgl_thread.hpp"
-#include "fatfs.h"
+// #include "fatfs.h"
 #include "high_precision_time.h"
 #include "stdio_CLI.h"
 
@@ -51,7 +51,7 @@ void StartDefaultTask(void *argument)
     FreeRTOS_IO_Init();
 
     // vTaskDelay(200);
-    f_mount(&SDFatFS, (TCHAR const *)SDPath, 1);
+    // f_mount(&SDFatFS, (TCHAR const *)SDPath, 1);
     // vTaskDelay(200);
 
     StartLvglMainThread();

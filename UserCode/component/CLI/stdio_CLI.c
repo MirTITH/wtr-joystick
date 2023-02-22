@@ -55,7 +55,7 @@ inline static void CLI_PutStr(const char *buffer)
     fflush(stdout);
 }
 
-static void CLI_EchoNewLine(char *buffer, uint buffer_size)
+static void CLI_EchoNewLine(char *buffer, size_t buffer_size)
 {
     printf("\n");
     // f_getcwd(buffer, buffer_size);
