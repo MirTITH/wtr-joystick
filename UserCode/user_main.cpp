@@ -13,6 +13,7 @@
 #include "fatfs.h"
 #include "high_precision_time.h"
 #include "stdio_CLI.h"
+#include "screen_console.hpp"
 
 using namespace std;
 
@@ -43,6 +44,8 @@ void SysInit()
     clearMem(&_sbss_itcm, &_ebss_itcm);
 }
 
+extern ScreenConsole screen_console;
+
 void StartDefaultTask(void *argument)
 {
     (void)argument;
@@ -51,15 +54,20 @@ void StartDefaultTask(void *argument)
     FreeRTOS_IO_Init();
 
     // vTaskDelay(200);
-    f_mount(&SDFatFS, (TCHAR const *)SDPath, 1);
+    // f_mount(&SDFatFS, (TCHAR const *)SDPath, 1);
     // vTaskDelay(200);
 
     StartLvglMainThread();
 
     CLI_Start();
 
+    for (;;) {
+        screen_console.AddText("Hello\n");
+        vTaskDelay(500);
+    }
+
     // 删除当前线程
-    vTaskDelete(nullptr);
+    // vTaskDelete(nullptr);
 
     // UINT readSize;
 

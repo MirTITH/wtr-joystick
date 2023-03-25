@@ -4,13 +4,15 @@
 static SemaphoreHandle_t LvglMutex;
 static TaskHandle_t thread_handle = nullptr;
 
+ScreenConsole screen_console;
+
 static void LvglMainThreadEntry(void *argument)
 {
     (void)argument;
     lv_init();
     lv_port_disp_init();
 
-    StartScreenConsoleThread();
+    screen_console.Init();
 
     uint32_t PreviousWakeTime = xTaskGetTickCount();
 
