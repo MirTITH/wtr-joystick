@@ -60,13 +60,9 @@ void StartDefaultTask(void *argument)
 
     CLI_Start();
 
-    for (;;) {
-        screen_console.AddText("Hello\n");
-        vTaskDelay(500);
-    }
 
     // 删除当前线程
-    // vTaskDelete(nullptr);
+    vTaskDelete(nullptr);
 
     // UINT readSize;
 
