@@ -59,6 +59,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LcdReset_Pin GPIO_PIN_1
 #define LcdReset_GPIO_Port GPIOA
+#define GyroCs_Pin GPIO_PIN_4
+#define GyroCs_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

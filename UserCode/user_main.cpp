@@ -14,10 +14,9 @@
 #include "high_precision_time.h"
 #include "stdio_CLI.h"
 #include "screen_console.hpp"
+#include "mpu9250.h"
 
 using namespace std;
-
-uint8_t work_buff[16384];
 
 void SysInit()
 {
@@ -60,9 +59,22 @@ void StartDefaultTask(void *argument)
 
     CLI_Start();
 
+    MPU9250_Init();
+
+    for (;;) {
+        int16_t AccData[3], GyroData[3], MagData[3];
+        MPU9250_GetData(AccData, MagData, GyroData);
+
+        printf("%08d;%08d;%08d;%08d;%08d;%08d;%08d;%08d;%08d\n",
+               (int16_t)AccData[0], (int16_t)AccData[1], (int16_t)AccData[2],
+               (int16_t)GyroData[0], (int16_t)GyroData[1], (int16_t)GyroData[2],
+               (int16_t)MagData[0], (int16_t)MagData[1], (int16_t)MagData[2]);
+
+        vTaskDelay(100);
+    }
 
     // 删除当前线程
-    vTaskDelete(nullptr);
+    // vTaskDelete(nullptr);
 
     // UINT readSize;
 

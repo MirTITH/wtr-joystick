@@ -13,10 +13,31 @@
 #include "cmsis_os.h"
 #include "FreeRTOS_CLI.h"
 #include <string>
-#include <string.h>
+#include "spi.h"
 // #include "ff.h"
 
 using namespace std;
+
+static BaseType_t WriteToSpi1(char *pcWriteBuffer, size_t xWriteBufferLen, const char *pcCommandString)
+{
+    (void)pcWriteBuffer;
+    (void)xWriteBufferLen;
+    (void)pcCommandString;
+
+    BaseType_t xParameterStringLength;
+    auto parameter = FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength);
+
+    if (parameter != nullptr) {
+        uint8_t tx_data = atoi(parameter);
+        uint8_t rx_data = 0;
+
+        printf("Writing 0x%x\n", tx_data);
+        HAL_SPI_TransmitReceive(&hspi1, &tx_data, &rx_data, 1, 1000);
+        printf("Received 0x%x\n", rx_data);
+    }
+
+    return pdFALSE;
+}
 
 /**
  * 不可重入，请勿多线程调用
@@ -177,4 +198,11 @@ void vRegisterCustomCLICommands()
     //     CMD_lcd_ad_mode,
     //     1};
     // FreeRTOS_CLIRegisterCommand(&lcd_ad_mode);
+
+    static const CLI_Command_Definition_t spi1 = {
+        "spi1",
+        "spi1: Write 1 byte to spi1.\n\n",
+        WriteToSpi1,
+        1};
+    FreeRTOS_CLIRegisterCommand(&spi1);
 }
