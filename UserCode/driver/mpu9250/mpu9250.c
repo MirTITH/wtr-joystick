@@ -231,11 +231,11 @@ uint8_t MPU9250_Init()
 	writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL);
 
 	// check the WHO AM I byte, expected value is 0x71 (decimal 113) or 0x73 (decimal 115)
-	uint8_t who = whoAmI();
-	if((who != 0x71) &&( who != 0x73))
-	{
-		return 1;
-	}
+	// uint8_t who = whoAmI();
+	// if((who != 0x71) &&( who != 0x73))
+	// {
+	// 	return 1;
+	// }
 
 	// enable accelerometer and gyro
 	writeRegister(PWR_MGMNT_2,SEN_ENABLE);
@@ -262,10 +262,10 @@ uint8_t MPU9250_Init()
 	writeRegister(I2C_MST_CTRL,I2C_MST_CLK);
 
 	// check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
-	if( whoAmIAK8963() != 0x48 )
-	{
-		return 1;
-	}
+	// if( whoAmIAK8963() != 0x48 )
+	// {
+	// 	return 1;
+	// }
 
 	/* get the magnetometer calibration */
 	// set AK8963 to Power Down
