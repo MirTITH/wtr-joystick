@@ -14,7 +14,6 @@
 #include "high_precision_time.h"
 #include "stdio_CLI.h"
 #include "screen_console.hpp"
-#include "mpu9250.h"
 
 using namespace std;
 
@@ -59,22 +58,35 @@ void StartDefaultTask(void *argument)
 
     CLI_Start();
 
-    MPU9250_Init();
+    // uint8_t res;
 
-    for (;;) {
-        int16_t AccData[3], GyroData[3], MagData[3];
-        MPU9250_GetData(AccData, MagData, GyroData);
+    // res = mpu9250(argc, argv);
+    // if (res == 0) {
+    //     /* run success */
+    // } else if (res == 1) {
+    //     mpu9250_interface_debug_print("mpu9250: run failed.\n");
+    // } else if (res == 5) {
+    //     mpu9250_interface_debug_print("mpu9250: param is invalid.\n");
+    // } else {
+    //     mpu9250_interface_debug_print("mpu9250: unknown status code.\n");
+    // }
 
-        printf("%08d;%08d;%08d;%08d;%08d;%08d;%08d;%08d;%08d\n",
-               (int16_t)AccData[0], (int16_t)AccData[1], (int16_t)AccData[2],
-               (int16_t)GyroData[0], (int16_t)GyroData[1], (int16_t)GyroData[2],
-               (int16_t)MagData[0], (int16_t)MagData[1], (int16_t)MagData[2]);
+    // MPU9250_Init();
 
-        vTaskDelay(100);
-    }
+    // for (;;) {
+    //     int16_t AccData[3], GyroData[3], MagData[3];
+    //     MPU9250_GetData(AccData, MagData, GyroData);
+
+    //     printf("%08d;%08d;%08d;%08d;%08d;%08d;%08d;%08d;%08d\n",
+    //            (int16_t)AccData[0], (int16_t)AccData[1], (int16_t)AccData[2],
+    //            (int16_t)GyroData[0], (int16_t)GyroData[1], (int16_t)GyroData[2],
+    //            (int16_t)MagData[0], (int16_t)MagData[1], (int16_t)MagData[2]);
+
+    //     vTaskDelay(100);
+    // }
 
     // 删除当前线程
-    // vTaskDelete(nullptr);
+    vTaskDelete(nullptr);
 
     // UINT readSize;
 
