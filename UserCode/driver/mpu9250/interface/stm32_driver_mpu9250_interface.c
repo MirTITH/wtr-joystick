@@ -37,21 +37,20 @@
 #include "driver_mpu9250_interface.h"
 #include "main.h"
 #include "i2c.h"
-#include "spi.h"
 #include <stdarg.h>
 #include "cmsis_os.h"
+#include "in_handle_mode.h"
 
-#define g_spi_handle hspi1
 #define g_i2c_handle hi2c1
 
-static void mpu9250_cs(uint8_t pin_level)
-{
-    if (pin_level) {
-        HAL_GPIO_WritePin(GyroCs_GPIO_Port, GyroCs_Pin, GPIO_PIN_SET);
-    } else {
-        HAL_GPIO_WritePin(GyroCs_GPIO_Port, GyroCs_Pin, GPIO_PIN_RESET);
-    }
-}
+// static void mpu9250_cs(uint8_t pin_level)
+// {
+// if (pin_level) {
+//     HAL_GPIO_WritePin(GyroCs_GPIO_Port, GyroCs_Pin, GPIO_PIN_SET);
+// } else {
+//     HAL_GPIO_WritePin(GyroCs_GPIO_Port, GyroCs_Pin, GPIO_PIN_RESET);
+// }
+// }
 
 /**
  * @brief     iic bus write
@@ -105,38 +104,42 @@ static uint8_t iic_read(uint8_t addr, uint8_t reg, uint8_t *buf, uint16_t len)
  */
 static uint8_t spi_write(uint8_t addr, uint8_t *buf, uint16_t len)
 {
-    uint8_t buffer;
-    uint8_t res;
+    (void)addr;
+    (void)buf;
+    (void)len;
+    return 1;
+    // uint8_t buffer;
+    // uint8_t res;
 
-    /* set cs low */
-    mpu9250_cs(0);
+    // /* set cs low */
+    // mpu9250_cs(0);
 
-    /* transmit the addr */
-    buffer = addr;
-    res    = HAL_SPI_Transmit(&g_spi_handle, (uint8_t *)&buffer, 1, 1000);
-    if (res != HAL_OK) {
-        /* set cs high */
-        mpu9250_cs(1);
+    // /* transmit the addr */
+    // buffer = addr;
+    // res    = HAL_SPI_Transmit(&g_spi_handle, (uint8_t *)&buffer, 1, 1000);
+    // if (res != HAL_OK) {
+    //     /* set cs high */
+    //     mpu9250_cs(1);
 
-        return 1;
-    }
+    //     return 1;
+    // }
 
-    /* if len > 0 */
-    if (len > 0) {
-        /* transmit the buffer */
-        res = HAL_SPI_Transmit(&g_spi_handle, buf, len, 1000);
-        if (res != HAL_OK) {
-            /* set cs high */
-            mpu9250_cs(1);
+    // /* if len > 0 */
+    // if (len > 0) {
+    //     /* transmit the buffer */
+    //     res = HAL_SPI_Transmit(&g_spi_handle, buf, len, 1000);
+    //     if (res != HAL_OK) {
+    //         /* set cs high */
+    //         mpu9250_cs(1);
 
-            return 1;
-        }
-    }
+    //         return 1;
+    //     }
+    // }
 
-    /* set cs high */
-    mpu9250_cs(0);
+    // /* set cs high */
+    // mpu9250_cs(0);
 
-    return 0;
+    // return 0;
 }
 
 /**
@@ -151,38 +154,42 @@ static uint8_t spi_write(uint8_t addr, uint8_t *buf, uint16_t len)
  */
 static uint8_t spi_read(uint8_t addr, uint8_t *buf, uint16_t len)
 {
-    uint8_t buffer;
-    uint8_t res;
+    (void)addr;
+    (void)buf;
+    (void)len;
+    return 1;
+    // uint8_t buffer;
+    // uint8_t res;
 
-    /* set cs low */
-    mpu9250_cs(0);
+    // /* set cs low */
+    // mpu9250_cs(0);
 
-    /* transmit the addr */
-    buffer = addr;
-    res    = HAL_SPI_Transmit(&g_spi_handle, (uint8_t *)&buffer, 1, 1000);
-    if (res != HAL_OK) {
-        /* set cs high */
-        mpu9250_cs(1);
+    // /* transmit the addr */
+    // buffer = addr;
+    // res    = HAL_SPI_Transmit(&g_spi_handle, (uint8_t *)&buffer, 1, 1000);
+    // if (res != HAL_OK) {
+    //     /* set cs high */
+    //     mpu9250_cs(1);
 
-        return 1;
-    }
+    //     return 1;
+    // }
 
-    /* if len > 0 */
-    if (len > 0) {
-        /* receive to the buffer */
-        res = HAL_SPI_Receive(&g_spi_handle, buf, len, 1000);
-        if (res != HAL_OK) {
-            /* set cs high */
-            mpu9250_cs(1);
+    // /* if len > 0 */
+    // if (len > 0) {
+    //     /* receive to the buffer */
+    //     res = HAL_SPI_Receive(&g_spi_handle, buf, len, 1000);
+    //     if (res != HAL_OK) {
+    //         /* set cs high */
+    //         mpu9250_cs(1);
 
-            return 1;
-        }
-    }
+    //         return 1;
+    //     }
+    // }
 
-    /* set cs high */
-    mpu9250_cs(1);
+    // /* set cs high */
+    // mpu9250_cs(1);
 
-    return 0;
+    // return 0;
 }
 
 /**
@@ -225,10 +232,21 @@ uint8_t mpu9250_interface_iic_deinit(void)
 uint8_t mpu9250_interface_iic_read(uint8_t addr, uint8_t reg, uint8_t *buf, uint16_t len)
 {
     uint8_t res;
+    UBaseType_t uxSavedInterruptStatus;
 
-    __disable_irq();
-    res = iic_read(addr, reg, buf, len);
-    __enable_irq();
+    if (InHandlerMode()) {
+        uxSavedInterruptStatus = taskENTER_CRITICAL_FROM_ISR();
+
+        res = iic_read(addr, reg, buf, len);
+
+        taskEXIT_CRITICAL_FROM_ISR(uxSavedInterruptStatus);
+    } else {
+        taskENTER_CRITICAL();
+
+        res = iic_read(addr, reg, buf, len);
+
+        taskEXIT_CRITICAL();
+    }
 
     return res;
 }
@@ -248,9 +266,21 @@ uint8_t mpu9250_interface_iic_write(uint8_t addr, uint8_t reg, uint8_t *buf, uin
 {
     uint8_t res;
 
-    __disable_irq();
-    res = iic_write(addr, reg, buf, len);
-    __enable_irq();
+    UBaseType_t uxSavedInterruptStatus;
+
+    if (InHandlerMode()) {
+        uxSavedInterruptStatus = taskENTER_CRITICAL_FROM_ISR();
+
+        res = iic_write(addr, reg, buf, len);
+
+        taskEXIT_CRITICAL_FROM_ISR(uxSavedInterruptStatus);
+    } else {
+        taskENTER_CRITICAL();
+
+        res = iic_write(addr, reg, buf, len);
+
+        taskEXIT_CRITICAL();
+    }
 
     return res;
 }
@@ -265,7 +295,7 @@ uint8_t mpu9250_interface_iic_write(uint8_t addr, uint8_t reg, uint8_t *buf, uin
 uint8_t mpu9250_interface_spi_init(void)
 {
     // return spi_init(SPI_MODE_3);
-    return 0;
+    return 1;
 }
 
 /**
@@ -364,117 +394,117 @@ void mpu9250_interface_receive_callback(uint8_t type)
 {
     switch (type) {
         case MPU9250_INTERRUPT_MOTION: {
-            mpu9250_interface_debug_print("mpu9250: irq motion.\n");
+            // mpu9250_interface_debug_print("mpu9250: irq motion.\n");
 
             break;
         }
         case MPU9250_INTERRUPT_FIFO_OVERFLOW: {
-            mpu9250_interface_debug_print("mpu9250: irq fifo overflow.\n");
+            // mpu9250_interface_debug_print("mpu9250: irq fifo overflow.\n");
 
             break;
         }
         case MPU9250_INTERRUPT_FSYNC_INT: {
-            mpu9250_interface_debug_print("mpu9250: irq fsync int.\n");
+            // mpu9250_interface_debug_print("mpu9250: irq fsync int.\n");
 
             break;
         }
         case MPU9250_INTERRUPT_DMP: {
-            mpu9250_interface_debug_print("mpu9250: irq dmp\n");
+            // mpu9250_interface_debug_print("mpu9250: irq dmp\n");
 
             break;
         }
         case MPU9250_INTERRUPT_DATA_READY: {
-            mpu9250_interface_debug_print("mpu9250: irq data ready\n");
+            // mpu9250_interface_debug_print("mpu9250: irq data ready\n");
 
             break;
         }
         default: {
-            mpu9250_interface_debug_print("mpu9250: irq unknown code.\n");
+            // mpu9250_interface_debug_print("mpu9250: irq unknown code.\n");
 
             break;
         }
     }
 }
 
-/**
- * @brief     interface dmp tap callback
- * @param[in] count is the tap count
- * @param[in] direction is the tap direction
- * @note      none
- */
-void mpu9250_interface_dmp_tap_callback(uint8_t count, uint8_t direction)
-{
-    switch (direction) {
-        case MPU9250_DMP_TAP_X_UP: {
-            mpu9250_interface_debug_print("mpu9250: tap irq x up with %d.\n", count);
+// /**
+//  * @brief     interface dmp tap callback
+//  * @param[in] count is the tap count
+//  * @param[in] direction is the tap direction
+//  * @note      none
+//  */
+// void mpu9250_interface_dmp_tap_callback(uint8_t count, uint8_t direction)
+// {
+//     switch (direction) {
+//         case MPU9250_DMP_TAP_X_UP: {
+//             mpu9250_interface_debug_print("mpu9250: tap irq x up with %d.\n", count);
 
-            break;
-        }
-        case MPU9250_DMP_TAP_X_DOWN: {
-            mpu9250_interface_debug_print("mpu9250: tap irq x down with %d.\n", count);
+//             break;
+//         }
+//         case MPU9250_DMP_TAP_X_DOWN: {
+//             mpu9250_interface_debug_print("mpu9250: tap irq x down with %d.\n", count);
 
-            break;
-        }
-        case MPU9250_DMP_TAP_Y_UP: {
-            mpu9250_interface_debug_print("mpu9250: tap irq y up with %d.\n", count);
+//             break;
+//         }
+//         case MPU9250_DMP_TAP_Y_UP: {
+//             mpu9250_interface_debug_print("mpu9250: tap irq y up with %d.\n", count);
 
-            break;
-        }
-        case MPU9250_DMP_TAP_Y_DOWN: {
-            mpu9250_interface_debug_print("mpu9250: tap irq y down with %d.\n", count);
+//             break;
+//         }
+//         case MPU9250_DMP_TAP_Y_DOWN: {
+//             mpu9250_interface_debug_print("mpu9250: tap irq y down with %d.\n", count);
 
-            break;
-        }
-        case MPU9250_DMP_TAP_Z_UP: {
-            mpu9250_interface_debug_print("mpu9250: tap irq z up with %d.\n", count);
+//             break;
+//         }
+//         case MPU9250_DMP_TAP_Z_UP: {
+//             mpu9250_interface_debug_print("mpu9250: tap irq z up with %d.\n", count);
 
-            break;
-        }
-        case MPU9250_DMP_TAP_Z_DOWN: {
-            mpu9250_interface_debug_print("mpu9250: tap irq z down with %d.\n", count);
+//             break;
+//         }
+//         case MPU9250_DMP_TAP_Z_DOWN: {
+//             mpu9250_interface_debug_print("mpu9250: tap irq z down with %d.\n", count);
 
-            break;
-        }
-        default: {
-            mpu9250_interface_debug_print("mpu9250: tap irq unknown code.\n");
+//             break;
+//         }
+//         default: {
+//             mpu9250_interface_debug_print("mpu9250: tap irq unknown code.\n");
 
-            break;
-        }
-    }
-}
+//             break;
+//         }
+//     }
+// }
 
-/**
- * @brief     interface dmp orient callback
- * @param[in] orientation is the dmp orientation
- * @note      none
- */
-void mpu9250_interface_dmp_orient_callback(uint8_t orientation)
-{
-    switch (orientation) {
-        case MPU9250_DMP_ORIENT_PORTRAIT: {
-            mpu9250_interface_debug_print("mpu9250: orient irq portrait.\n");
+// /**
+//  * @brief     interface dmp orient callback
+//  * @param[in] orientation is the dmp orientation
+//  * @note      none
+//  */
+// void mpu9250_interface_dmp_orient_callback(uint8_t orientation)
+// {
+//     switch (orientation) {
+//         case MPU9250_DMP_ORIENT_PORTRAIT: {
+//             mpu9250_interface_debug_print("mpu9250: orient irq portrait.\n");
 
-            break;
-        }
-        case MPU9250_DMP_ORIENT_LANDSCAPE: {
-            mpu9250_interface_debug_print("mpu9250: orient irq landscape.\n");
+//             break;
+//         }
+//         case MPU9250_DMP_ORIENT_LANDSCAPE: {
+//             mpu9250_interface_debug_print("mpu9250: orient irq landscape.\n");
 
-            break;
-        }
-        case MPU9250_DMP_ORIENT_REVERSE_PORTRAIT: {
-            mpu9250_interface_debug_print("mpu9250: orient irq reverse portrait.\n");
+//             break;
+//         }
+//         case MPU9250_DMP_ORIENT_REVERSE_PORTRAIT: {
+//             mpu9250_interface_debug_print("mpu9250: orient irq reverse portrait.\n");
 
-            break;
-        }
-        case MPU9250_DMP_ORIENT_REVERSE_LANDSCAPE: {
-            mpu9250_interface_debug_print("mpu9250: orient irq reverse landscape.\n");
+//             break;
+//         }
+//         case MPU9250_DMP_ORIENT_REVERSE_LANDSCAPE: {
+//             mpu9250_interface_debug_print("mpu9250: orient irq reverse landscape.\n");
 
-            break;
-        }
-        default: {
-            mpu9250_interface_debug_print("mpu9250: orient irq unknown code.\n");
+//             break;
+//         }
+//         default: {
+//             mpu9250_interface_debug_print("mpu9250: orient irq unknown code.\n");
 
-            break;
-        }
-    }
-}
+//             break;
+//         }
+//     }
+// }

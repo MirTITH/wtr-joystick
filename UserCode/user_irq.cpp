@@ -1,14 +1,23 @@
-#include "user_irq.hpp"
+#include "main.h"
 #include "lvgl.h"
 #include "FreeRTOS.h"
-#include "mpu9250_mutex.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void vApplicationTickHook();
+void HAL_GPIO_EXTI_Callback(uint16_t pin);
+// void DMA_XferCpltCallback(DMA_HandleTypeDef *hdma);
+
+#ifdef __cplusplus
+}
+#endif
 
 void vApplicationTickHook(void)
 {
     lv_tick_inc(1000 / configTICK_RATE_HZ);
 }
-
-extern uint8_t (*g_gpio_irq)(void);
 
 /**
  * @brief     gpio exti callback
@@ -17,9 +26,14 @@ extern uint8_t (*g_gpio_irq)(void);
  */
 void HAL_GPIO_EXTI_Callback(uint16_t pin)
 {
-    if (pin == GPIO_PIN_0) {
-        /* run the callback in the mutex mode */
-        mutex_irq(g_gpio_irq);
+    switch (pin) {
+        case GPIO_PIN_0:
+            extern uint32_t MpuInterruptCount;
+            MpuInterruptCount++;
+            break;
+
+        default:
+            break;
     }
 }
 

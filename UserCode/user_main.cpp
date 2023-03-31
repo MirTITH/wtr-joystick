@@ -14,6 +14,7 @@
 #include "high_precision_time.h"
 #include "stdio_CLI.h"
 #include "screen_console.hpp"
+#include "driver_mpu9250_basic.h"
 
 using namespace std;
 
@@ -44,6 +45,42 @@ void SysInit()
 
 extern ScreenConsole screen_console;
 
+uint32_t MpuInterruptCount = 0;
+
+int mpu9250_basic_main()
+{
+    uint8_t res;
+    float g[3];
+    float dps[3];
+    float ut[3];
+    float temperature;
+    res = mpu9250_basic_init(MPU9250_INTERFACE_IIC, MPU9250_ADDRESS_AD0_LOW);
+
+    if (res != 0) {
+        return 1;
+    }
+
+    while (true) {
+        if (mpu9250_basic_read(g, dps, ut) != 0) {
+            (void)mpu9250_basic_deinit();
+
+            return 1;
+        }
+
+        if (mpu9250_basic_read_temperature(&temperature) != 0) {
+            (void)mpu9250_basic_deinit();
+
+            return 1;
+        }
+
+        printf("gyro:%5.2f,%5.2f,%5.2f,", g[0], g[1], g[2]);
+        printf("%5.1f,%5.1f,%5.1f,", dps[0], dps[1], dps[2]);
+        printf("%6.2f,%6.2f,%6.2f,", ut[0], ut[1], ut[2]);
+        printf("%0.2f\n", temperature);
+        vTaskDelay(1000);
+    }
+}
+
 void StartDefaultTask(void *argument)
 {
     (void)argument;
@@ -53,10 +90,17 @@ void StartDefaultTask(void *argument)
 
     // vTaskDelay(200);
     // f_mount(&SDFatFS, (TCHAR const *)SDPath, 1);
-    // vTaskDelay(200);
     StartLvglMainThread();
 
     CLI_Start();
+    vTaskDelay(1000);
+    printf("Start!\n");
+
+    while (true) {
+        auto result = mpu9250_basic_main();
+        printf("mpu9250_basic_main returned %d\nRetry in 3 seconds\n", result);
+        vTaskDelay(3000);
+    }
 
     // uint8_t res;
 

@@ -4692,6 +4692,7 @@ uint8_t mpu9250_irq_handler(mpu9250_handle_t *handle)
         {
             handle->receive_callback(MPU9250_INTERRUPT_MOTION);                           /* run callback */
         }
+        return 0;
     }
     if ((prev & (1 << MPU9250_INTERRUPT_FIFO_OVERFLOW)) != 0)                             /* if fifo overflow */
     {
@@ -4700,6 +4701,7 @@ uint8_t mpu9250_irq_handler(mpu9250_handle_t *handle)
             handle->receive_callback(MPU9250_INTERRUPT_FIFO_OVERFLOW);                    /* run callback */
         }
         (void)a_mpu9250_reset_fifo(handle);                                               /* reset the fifo */
+        return 0;
     }
     if ((prev & (1 << MPU9250_INTERRUPT_FSYNC_INT)) != 0)                                 /* if fsync int */
     {
@@ -4707,6 +4709,7 @@ uint8_t mpu9250_irq_handler(mpu9250_handle_t *handle)
         {
             handle->receive_callback(MPU9250_INTERRUPT_FSYNC_INT);                        /* run callback */
         }
+        return 0;
     }
     if ((prev & (1 << MPU9250_INTERRUPT_DMP)) != 0)                                       /* if dmp */
     {
@@ -4714,6 +4717,7 @@ uint8_t mpu9250_irq_handler(mpu9250_handle_t *handle)
         {
             handle->receive_callback(MPU9250_INTERRUPT_DMP);                              /* run callback */
         }
+        return 0;
     }
     if ((prev & (1 << MPU9250_INTERRUPT_DATA_READY)) != 0)                                /* if data ready */
     {
@@ -4721,6 +4725,7 @@ uint8_t mpu9250_irq_handler(mpu9250_handle_t *handle)
         {
             handle->receive_callback(MPU9250_INTERRUPT_DATA_READY);                       /* run callback */
         }
+        return 0;
     }
     
     return 0;                                                                             /* success return 0 */

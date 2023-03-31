@@ -13,7 +13,7 @@
 #include "cmsis_os.h"
 #include "FreeRTOS_CLI.h"
 #include <string>
-#include "spi.h"
+// #include "spi.h"
 #include <cstring>
 // #include "mpu9250_cli.h"
 
