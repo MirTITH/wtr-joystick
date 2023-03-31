@@ -4111,10 +4111,10 @@ uint8_t mpu9250_init(mpu9250_handle_t *handle)
     }
     if (prev != 0x71)                                                               /* check the id */
     {
-        handle->debug_print("mpu9250: id 0x%x is invalid.\n", prev);                   /* id is invalid */
-        // (void)a_mpu9250_deinit(handle);                                             /* iic or spi deinit */
+        handle->debug_print("mpu9250: id is invalid.\n");                           /* id is invalid */
+        (void)a_mpu9250_deinit(handle);                                             /* iic or spi deinit */
         
-        // return 5;                                                                   /* return error */
+        return 5;                                                                   /* return error */
     }
     
     prev = 1 << 7;                                                                  /* reset the device */
