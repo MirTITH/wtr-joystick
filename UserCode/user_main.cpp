@@ -45,7 +45,6 @@ void SysInit()
 
 extern ScreenConsole screen_console;
 
-uint32_t MpuInterruptCount = 0;
 
 int mpu9250_basic_main()
 {
@@ -64,20 +63,20 @@ int mpu9250_basic_main()
         if (mpu9250_basic_read(g, dps, ut) != 0) {
             (void)mpu9250_basic_deinit();
 
-            return 1;
+            return 2;
         }
 
         if (mpu9250_basic_read_temperature(&temperature) != 0) {
             (void)mpu9250_basic_deinit();
 
-            return 1;
+            return 3;
         }
 
-        printf("gyro:%5.2f,%5.2f,%5.2f,", g[0], g[1], g[2]);
-        printf("%5.1f,%5.1f,%5.1f,", dps[0], dps[1], dps[2]);
-        printf("%6.2f,%6.2f,%6.2f,", ut[0], ut[1], ut[2]);
-        printf("%0.2f\n", temperature);
-        vTaskDelay(1000);
+        printf("gyro:%5.2f,%5.2f,%5.2f|", g[0], g[1], g[2]);
+        printf("acc:%5.1f,%5.1f,%5.1f|", dps[0], dps[1], dps[2]);
+        printf("mag:%6.2f,%6.2f,%6.2f|", ut[0], ut[1], ut[2]);
+        printf("temp:%0.2f\n", temperature);
+        vTaskDelay(100);
     }
 }
 

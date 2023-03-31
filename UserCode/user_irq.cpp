@@ -28,8 +28,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin)
 {
     switch (pin) {
         case GPIO_PIN_0:
-            extern uint32_t MpuInterruptCount;
-            MpuInterruptCount++;
+            // extern uint32_t MpuInterruptCount;
+            // MpuInterruptCount++;
             break;
 
         default:
