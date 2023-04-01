@@ -92,13 +92,19 @@ void StartDefaultTask(void *argument)
     StartLvglMainThread();
 
     CLI_Start();
-    vTaskDelay(1000);
-    printf("Start!\n");
+    // vTaskDelay(1000);
+    // printf("Start!\n");
+
+    int counter = 0;
 
     while (true) {
-        auto result = mpu9250_basic_main();
-        printf("mpu9250_basic_main returned %d\nRetry in 3 seconds\n", result);
-        vTaskDelay(3000);
+        // auto result = mpu9250_basic_main();
+        // screen_console.AddText("mpu9250_basic_main returned ");
+        // screen_console.AddText(to_string(result));
+        // screen_console.AddText("\nRetry in 3 seconds\n");
+        screen_console.AddText("Hello ");
+        screen_console.AddText(to_string(counter++).append("\n"));
+        vTaskDelay(200);
     }
 
     // uint8_t res;

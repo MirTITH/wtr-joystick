@@ -29,7 +29,7 @@ void LcdIoFmc::SetBacklight(uint32_t lightness)
 void LcdIoFmc::LcdInit()
 {
     HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-    SetBacklight(50);
+    SetBacklight(100);
     HardReset();
 }
 

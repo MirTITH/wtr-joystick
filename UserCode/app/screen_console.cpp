@@ -54,9 +54,9 @@ void ScreenConsole::Init()
     text_area = lv_textarea_create(lv_scr_act());
     lv_style_init(&style);
 
-    lv_style_set_height(&style, lv_pct(80));
+    lv_style_set_height(&style, lv_pct(95));
     lv_style_set_width(&style, lv_pct(95));
-    lv_style_set_align(&style, LV_ALIGN_BOTTOM_MID);
+    lv_style_set_align(&style, LV_ALIGN_CENTER);
 
     lv_obj_add_style(text_area, &style, 0);
     lv_textarea_set_cursor_click_pos(text_area, false);

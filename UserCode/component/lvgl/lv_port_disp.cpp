@@ -10,7 +10,7 @@
  *      INCLUDES
  *********************/
 #include "lv_port_disp.h"
-#include "STM32_ILI9481.hpp"
+#include "stm32_st7796.hpp"
 #include "dma.h"
 #include "cmsis_os.h"
 
@@ -36,7 +36,7 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 /**********************
  *  VARIABLES
  **********************/
-static LCD_ILI9481 LCD;
+static LCD_ST7796 LCD;
 
 static lv_disp_drv_t disp_drv; /*Descriptor of a display driver*/
 
