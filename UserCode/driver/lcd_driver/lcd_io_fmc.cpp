@@ -1,6 +1,11 @@
 #include "lcd_io_fmc.hpp"
 #include "tim.h"
 
+uint16_t LcdIoFmc::ReadData()
+{
+    return *LCD_COMMAND_ADDRESS;
+}
+
 void LcdIoFmc::WriteCmd8(uint8_t cmd)
 {
     *LCD_COMMAND_ADDRESS = cmd;
@@ -26,10 +31,21 @@ void LcdIoFmc::SetBacklight(uint32_t lightness)
     __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, lightness);
 }
 
-void LcdIoFmc::LcdInit()
+// void LcdIoFmc::SemaphoreInit()
+// {
+//     _sem = xSemaphoreCreateBinary();
+//     xSemaphoreGive(_sem);
+// }
+
+// void LcdIoFmc::SemaphoreDeinit()
+// {
+//     vSemaphoreDelete(_sem);
+// }
+
+void LcdIoFmc::InitBacklight()
 {
     HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-    SetBacklight(100);
+    SetBacklight(500);
     HardReset();
 }
 

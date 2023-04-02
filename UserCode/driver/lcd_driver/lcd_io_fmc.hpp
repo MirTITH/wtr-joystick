@@ -1,6 +1,9 @@
 #pragma once
 
 #include "main.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "in_handle_mode.h"
 
 class LcdIoFmc
 {
@@ -24,16 +27,52 @@ private:
     GPIO_TypeDef *const RESET_GPIOX = LcdReset_GPIO_Port;
     const uint16_t RESET_GPIO_PIN   = LcdReset_Pin;
 
+    SemaphoreHandle_t _sem = nullptr;
+
 public:
     volatile uint16_t *const LCD_COMMAND_ADDRESS = (uint16_t *)LCD_BASE;
     volatile uint16_t *const LCD_DATA_ADDRESS    = (uint16_t *)(LCD_BASE + (0x4000000 - 2));
-    // LcdIoFmc(){};
-    // ~LcdIoFmc(){};
-    void LcdInit();
+
+    LcdIoFmc()
+    {
+        _sem = xSemaphoreCreateBinary();
+        xSemaphoreGive(_sem);
+    }
+
+    ~LcdIoFmc()
+    {
+        vSemaphoreDelete(_sem);
+    }
+
+    // void SemaphoreInit();
+    // void SemaphoreDeinit();
+    void SemaphoreTake(TickType_t tick = portMAX_DELAY)
+    {
+        if (InHandlerMode()) {
+            xSemaphoreTakeFromISR(_sem, nullptr);
+        } else {
+            xSemaphoreTake(_sem, tick);
+        };
+    }
+
+    void SemaphoreGive()
+    {
+        if (InHandlerMode()) {
+            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+            xSemaphoreGiveFromISR(_sem, &xHigherPriorityTaskWoken);
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        } else {
+            xSemaphoreGive(_sem);
+        }
+    };
+
+    void InitBacklight();
     void HardReset();
+    uint16_t ReadData();
     void WriteCmd8(uint8_t cmd);
     void WriteCmd16(uint16_t cmd);
     void WriteData8(uint8_t data);
     void WriteData16(uint16_t data);
+    
     void SetBacklight(uint32_t lightness);
 };

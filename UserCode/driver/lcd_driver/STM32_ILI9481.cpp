@@ -68,7 +68,7 @@ LCD_ILI9481::LCD_ILI9481()
 
 void LCD_ILI9481::initializeDisplay()
 {
-    LcdInit();
+    InitBacklight();
     startDisplay();
 }
 

@@ -36,7 +36,7 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 /**********************
  *  VARIABLES
  **********************/
-static LCD_ST7796 LCD;
+LCD_ST7796 LCD;
 
 static lv_disp_drv_t disp_drv; /*Descriptor of a display driver*/
 
@@ -51,6 +51,7 @@ static lv_disp_drv_t disp_drv; /*Descriptor of a display driver*/
 static void dma_cplt_cb(DMA_HandleTypeDef *hdma)
 {
     (void)hdma;
+    LCD.SemaphoreGive();
     lv_disp_flush_ready(&disp_drv);
 }
 
@@ -140,7 +141,6 @@ void lv_port_disp_init(void)
 static void disp_init(void)
 {
     LCD.initializeDisplay();
-    LCD.SetBacklight(1000);
 }
 
 volatile bool disp_flush_enabled = true;
@@ -166,6 +166,13 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 {
     (void)disp_drv;
     if (disp_flush_enabled) {
+        // 横屏无法垂直同步，干脆不同步了
+        // int16_t scanLine;
+        // LCD.SemaphoreTake();
+        // do {
+        //     scanLine = LCD.getScanline() - 1;
+        // } while (scanLine > area->x1 && scanLine < area->x2);
+
         LCD.setAddrWindow(area->x1, area->y1, area->x2, area->y2);
 
         // int total = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1);

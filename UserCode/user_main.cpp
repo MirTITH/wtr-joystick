@@ -15,6 +15,7 @@
 #include "stdio_CLI.h"
 #include "screen_console.hpp"
 #include "driver_mpu9250_basic.h"
+#include "stm32_st7796.hpp"
 
 using namespace std;
 
@@ -44,7 +45,6 @@ void SysInit()
 }
 
 extern ScreenConsole screen_console;
-
 
 int mpu9250_basic_main()
 {
@@ -80,6 +80,9 @@ int mpu9250_basic_main()
     }
 }
 
+// #define scanline_SIZE 500
+// uint16_t scanline[scanline_SIZE];
+
 void StartDefaultTask(void *argument)
 {
     (void)argument;
@@ -95,16 +98,29 @@ void StartDefaultTask(void *argument)
     // vTaskDelay(1000);
     // printf("Start!\n");
 
-    int counter = 0;
+    // int counter = 0;
+
+    extern LCD_ST7796 LCD;
 
     while (true) {
-        // auto result = mpu9250_basic_main();
-        // screen_console.AddText("mpu9250_basic_main returned ");
-        // screen_console.AddText(to_string(result));
-        // screen_console.AddText("\nRetry in 3 seconds\n");
-        screen_console.AddText("Hello ");
-        screen_console.AddText(to_string(counter++).append("\n"));
-        vTaskDelay(200);
+        // LCD.SemaphoreTake();
+        // for (int i = 0; i < scanline_SIZE; i++) {
+        //     scanline[i] = LCD.getScanline();
+        //     HPT_DelayUs(30);
+        // }
+        // LCD.SemaphoreGive();
+        // // auto result = mpu9250_basic_main();
+        // // screen_console.AddText("mpu9250_basic_main returned ");
+        // // screen_console.AddText(to_string(result));
+        // // screen_console.AddText("\nRetry in 3 seconds\n");
+        // // screen_console.AddText("Hello ");
+        // // screen_console.AddText(to_string(counter++).append("\n"));
+        // for (int i = 0; i < scanline_SIZE; i++) {
+        //     printf("%4d ", scanline[i]);
+        // }
+
+        // printf("\n=============\n");
+        vTaskDelay(1000);
     }
 
     // uint8_t res;
